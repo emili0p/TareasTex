@@ -1,0 +1,143 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{hyperref}
+\geometry{a4paper, margin=2.5cm}
+
+\title{Actividad de Aprendizaje 1.2 \\ Investigación de Funciones \\ emilio izquierdo montero}
+\author{Matemáticas para Ciencia de Datos \\ 8SA 2026A}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introducción}
+
+Las funciones matemáticas permiten modelar fenómenos reales estableciendo una relación entre variables. En Ciencia de Datos, las funciones son fundamentales para describir comportamientos, realizar predicciones y analizar información. En este documento se presentan cinco aplicaciones prácticas de distintos tipos de funciones.
+
+\section{Función Lineal: Modelado de Costos}
+
+Una función lineal tiene la forma:
+
+\[
+f(x) = mx + b
+\]
+
+donde:
+\begin{itemize}
+    \item $m$ es la pendiente
+    \item $b$ es la intersección con el eje $y$
+\end{itemize}
+
+\subsection*{Aplicación}
+
+Supongamos que una empresa cobra \$50 pesos por envío más \$10 pesos por cada producto adicional. El costo total se modela como:
+
+\[
+C(x) = 10x + 50
+\]
+
+donde $x$ es la cantidad de productos.
+
+Esta función permite predecir ingresos y planificar estrategias comerciales.
+
+\section{Función Cuadrática: Movimiento y Optimización}
+
+Una función cuadrática tiene la forma:
+
+\[
+f(x) = ax^2 + bx + c
+\]
+
+\subsection*{Aplicación}
+
+En física, la altura de un objeto lanzado verticalmente puede modelarse como:
+
+\[
+h(t) = -4.9t^2 + v_0 t + h_0
+\]
+
+Esta función permite:
+\begin{itemize}
+    \item Calcular la altura máxima.
+    \item Determinar el tiempo de impacto.
+\end{itemize}
+
+En Ciencia de Datos también se usa en problemas de optimización.
+
+\section{Función Exponencial: Crecimiento Poblacional y Datos}
+
+Una función exponencial tiene la forma:
+
+\[
+f(x) = a e^{bx}
+\]
+
+\subsection*{Aplicación}
+
+El crecimiento de usuarios en una red social puede modelarse como:
+
+\[
+U(t) = U_0 e^{kt}
+\]
+
+donde:
+\begin{itemize}
+    \item $U_0$ es la cantidad inicial de usuarios.
+    \item $k$ es la tasa de crecimiento.
+\end{itemize}
+
+Se utiliza para:
+\begin{itemize}
+    \item Modelar crecimiento acelerado.
+    \item Analizar propagación de información.
+\end{itemize}
+
+\section{Función Logarítmica: Escalas y Análisis de Datos}
+
+Una función logarítmica tiene la forma:
+
+\[
+f(x) = \log(x)
+\]
+
+\subsection*{Aplicación}
+
+El nivel de sonido en decibeles se calcula mediante:
+
+\[
+L = 10 \log_{10}\left(\frac{I}{I_0}\right)
+\]
+
+También se usa en Ciencia de Datos para:
+\begin{itemize}
+    \item Normalizar datos.
+    \item Reducir sesgos en distribuciones muy dispersas.
+\end{itemize}
+
+\section{Función Sigmoide: Clasificación en Machine Learning}
+
+La función sigmoide se define como:
+
+\[
+\sigma(x) = \frac{1}{1 + e^{-x}}
+\]
+
+\subsection*{Aplicación}
+
+Se usa en regresión logística para clasificar datos en categorías binarias (por ejemplo: aprobado/reprobado).
+
+Convierte cualquier valor real en un valor entre 0 y 1, interpretado como probabilidad.
+
+\section{Conclusión}
+
+Las funciones matemáticas son herramientas fundamentales en Ciencia de Datos. Permiten modelar fenómenos económicos, físicos y tecnológicos. Comprender sus propiedades facilita el análisis, predicción y toma de decisiones basada en datos.
+
+\end{document}
+
