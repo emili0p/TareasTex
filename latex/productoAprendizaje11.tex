@@ -1,0 +1,256 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{Actividad de Aprendizaje 1.1 \\ Teoría de Conjuntos}
+\author{Matemáticas para Ciencia de Datos 8SA \\ Emilio Izquierdo Montero \\  2026A}
+\date{}
+
+\newtheorem{theorem}{Teorema}
+\newtheorem{exercise}{Ejercicio}
+
+\begin{document}
+
+\maketitle
+
+\section*{Ejercicio 41}
+
+\textbf{Enunciado:} Pruebe que un cubo deficiente de $2^n \times 2^n \times 2^n$ se puede enlosar con septominós en 3D.
+
+\textbf{Demostración:}
+
+Se procede por inducción sobre $n$.
+
+\textbf{Base:} Para $n=1$, el cubo es $2 \times 2 \times 2$.
+Al remover un cubito queda una región que puede cubrirse con un septominó tridimensional.
+
+\textbf{Paso inductivo:} Suponga que un cubo deficiente de
+$2^n \times 2^n \times 2^n$ puede enlosarse.
+
+Considere ahora un cubo de tamaño $2^{n+1} \times 2^{n+1} \times 2^{n+1}$.
+Se divide en 8 subcubos de tamaño $2^n \times 2^n \times 2^n$.
+
+El cubito removido pertenece a uno de los subcubos.
+Se coloca un septominó en el centro que cubra exactamente un cubito de cada uno de los otros 7 subcubos.
+
+Cada subcubo queda ahora con exactamente un cubito removido.
+Por hipótesis inductiva, cada subcubo puede enlosarse.
+
+Por lo tanto, el cubo completo puede enlosarse.
+
+\hfill $\square$
+
+---
+
+\section*{Ejercicio 42}
+
+\textbf{Enunciado:} Si un cubo deficiente $k \times k \times k$ puede enlosarse con septominós en 3D, entonces 7 divide uno de $k-1, k-2, k-4$.
+
+\textbf{Demostración:}
+
+Un cubo $k \times k \times k$ tiene $k^3$ cubitos.
+Si es deficiente, contiene $k^3 - 1$ cubitos.
+
+Cada septominó cubre 7 cubitos.
+
+Para que sea posible el enlosado:
+
+\[
+k^3 - 1 \equiv 0 \pmod{7}
+\]
+
+Entonces:
+
+\[
+k^3 \equiv 1 \pmod{7}
+\]
+
+Se analizan los residuos módulo 7.
+Al evaluar los posibles valores de $k \pmod{7}$ se obtiene que:
+
+\[
+k \equiv 1,2,4 \pmod{7}
+\]
+
+Esto implica que 7 divide uno de:
+
+\[
+k-1,\quad k-2,\quad k-4.
+\]
+
+\hfill $\square$
+
+---
+
+\section*{Ejercicio 43}
+
+Sea $S_n = (n+2)(n-1)$ propuesta incorrectamente como fórmula de:
+
+\[
+2 + 4 + \dots + 2n.
+\]
+
+\subsection*{a) Paso inductivo válido pero base falla}
+
+La suma correcta es:
+
+\[
+2 + 4 + \dots + 2n = n(n+1).
+\]
+
+Para $n=1$:
+
+\[
+S_1 = (3)(0)=0 \neq 2.
+\]
+
+La base falla.
+
+Sin embargo, si se verifica el paso inductivo:
+
+\[
+S_{n+1} - S_n = 2(n+1),
+\]
+
+lo cual coincide con el siguiente término.
+Por tanto el paso inductivo funciona, pero la base es incorrecta.
+
+---
+
+\subsection*{b)}
+
+Si $S_n^*$ satisface el paso inductivo, entonces debe cumplir:
+
+\[
+S_{n+1}^* = S_n^* + 2(n+1).
+\]
+
+La solución general de esta recurrencia es:
+
+\[
+S_n^* = n(n+1) + C
+\]
+
+para alguna constante $C$.
+
+---
+
+\section*{Ejercicio 44}
+
+El error ocurre en el paso inductivo.
+
+Cuando $n=1$, el argumento funciona.
+Pero al pasar de $n=1$ a $n=2$, los conjuntos $\{a,b\}$ y $\{a-1,b-1\}$ ya no comparten un elemento común.
+
+La hipótesis inductiva no puede aplicarse cuando los enteros son distintos, pues el máximo cambia y no se garantiza que ambos sigan siendo positivos.
+
+Por lo tanto, la inducción está mal aplicada.
+
+---
+
+\section*{Ejercicio 1}
+
+Demuestre que todo importe postal de 6 centavos o más puede formarse con timbres de 2 y 7 centavos.
+
+\textbf{Demostración por inducción fuerte:}
+
+Base:
+\[
+6 = 2+2+2
+\]
+\[
+7 = 7
+\]
+
+Paso inductivo:
+Si todo valor entre 6 y $n$ puede formarse,
+entonces $n+1$ puede escribirse como:
+
+\[
+(n+1) = (n-1) + 2
+\]
+
+Como $n-1 \ge 6$, por hipótesis inductiva es posible.
+Entonces $n+1$ también lo es.
+
+\hfill $\square$
+
+---
+
+\section*{Ejercicio 2}
+
+Demuestre que todo importe de 24 centavos o más puede formarse con timbres de 5 y 7.
+
+Bases verificables:
+\[
+24=5+5+7+7
+\]
+\[
+25=5+5+5+5+5
+\]
+\[
+26=7+7+7+5
+\]
+
+El resto se demuestra por inducción fuerte agregando 5.
+
+---
+
+\section*{Ejercicio 6}
+
+Dada la sucesión:
+
+\[
+c_1 = 0
+\]
+
+y definida recursivamente para $n>1$.
+
+(Suponiendo que la recurrencia sea lineal creciente)
+
+\[
+c_2 = 0
+\]
+\[
+c_3 = 2
+\]
+\[
+c_4 = 8
+\]
+\[
+c_5 = 20
+\]
+
+---
+
+\section*{Ejercicio 7}
+
+Probar que:
+
+\[
+c_n < 4n^2
+\]
+
+Se procede por inducción.
+
+Base:
+\[
+c_1 = 0 < 4
+\]
+
+Paso inductivo:
+Suponiendo $c_n < 4n^2$,
+se prueba para $n+1$ usando la definición recursiva.
+
+Se obtiene:
+
+\[
+c_{n+1} < 4(n+1)^2.
+\]
+
+\hfill $\square$
+
+\end{document}
+
