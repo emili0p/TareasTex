@@ -1,0 +1,166 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\geometry{margin=2.5cm}
+
+\title{Documento de Uso y Organización de la Aplicación}
+\author{Análisis y diseño}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+El presente documento tiene como objetivo describir la arquitectura de la aplicación, justificar la elección de las tecnologías utilizadas, y establecer los estándares y la estructura de trabajo en el repositorio del proyecto.
+
+\section{Tecnologías Elegidas}
+La aplicación se desarrolla con un \textbf{backend monolítico en Laravel} y un \textbf{frontend en Vue.js}, siguiendo un patrón de comunicación mediante \textbf{API REST} el cual nos permitira comunicar diferentes partes de la aplicacion con peticiones en htt el cual nos permitira comunicar diferentes partes de la aplicacion con peticiones en http. 
+
+\subsection{Justificación del Frontend}
+Se eligió \textbf{Vue.js} por las siguientes razones:
+\begin{itemize}
+    \item Es un framework que presenta una alta compatibilidad con Laravel, facilitando la integración entre frontend y backend.
+    \item El equipo de frontend ya posee experiencia en \textbf{JavaScript}, lo que reduce la curva de aprendizaje al parecerce a otros frameworks de JavaScript que se han utilizado con anterioridad en el frontend acelerando asi  el desarrollo.
+    \item Permite construir aplicaciones SPA (Single Page Application) con componentes reutilizables (esencial dado que varios modulos se repetiran) y fácil mantenimiento.
+\end{itemize}
+
+\subsection{Justificación del Backend}
+El \textbf{backend en Laravel} fue seleccionado considerando:
+\begin{itemize}
+    \item El equipo ya ha trabajado con \textbf{PHP} y conexión a bases de datos relacionales en materias anteriores, lo que hace sencilla la adopción de Laravel.
+    \item Laravel proporciona una estructura organizada de \textbf{Controllers, Models y Services}, que facilita la implementación de la lógica de negocio y la gestión de rutas API.
+    \item Permite integración rápida con bases de datos SQL, como \textbf{MariaDB o cualquier BD relacional, sin mucho problema de migración}.
+\end{itemize}
+
+\subsection{Base de Datos y Despliegue}
+La base de datos seleccionada es \textbf{MariaDB}, la cual:
+\begin{itemize}
+    \item Es compatible con Laravel mediante Eloquent ORM.
+    \item Se puede desplegar de forma contenerizada junto con la aplicación, permitiendo pruebas rápidas y entornos reproducibles.
+    \item Facilita la administración y migración de datos durante el desarrollo y pruebas.
+\end{itemize}
+
+\subsection{Justificación del Backend}
+El \textbf{backend en Laravel} fue seleccionado considerando:
+\begin{itemize}
+    \item El equipo ya ha trabajado con \textbf{PHP} y conexión a bases de datos relacionales en materias anteriores, lo que hace sencilla la adopción de Laravel.
+    \item Laravel proporciona una estructura organizada de \textbf{Controllers, Models y Services}, que facilita la implementación de la lógica de negocio y la gestión de rutas API.
+    \item Permite integración rápida con bases de datos SQL, como \textbf{MariaDB o cualquier BD relacional, sin mucho problema de migración}.
+\end{itemize}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{/home/emilio/Descargas/arqr.drawio.png} 
+    \caption{Diagrama de arquitectura del software}
+    \label{fig:arquitectura}
+\end{figure}
+
+\section{Estructura del Repositorio}
+Se propone una organización estándar para el repositorio Git del proyecto, con la siguiente estructura de carpetas:
+
+\begin{verbatim}
+/raiz-projecto
+│
+├── backend/                  # Código Laravel
+│   ├── app/
+│   │   ├── Http/Controllers/
+│   │   ├── Models/
+│   │   ├── Services/
+│   │   └── Repositories/
+│   ├── routes/
+│   ├── database/
+│   │   ├── migrations/
+│   │   └── seeders/
+│   └── config/
+│
+├── frontend/                 # Código Vue.js
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── router/
+│   │   └── store/
+│   └── public/
+│
+├── docker/                   # Archivos para contenerización
+│   ├── Dockerfile.backend
+│   ├── Dockerfile.frontend
+│   └── docker-compose.yml
+│
+├── tests/                    # Pruebas unitarias y de integración
+├── .gitignore
+└── README.md
+\end{verbatim}
+
+Esta estructura permite separar claramente el frontend y backend, facilita la contenerización y despliegue rápido de la aplicación y la base de datos, y mantiene un estándar de organización que el equipo puede seguir de manera consistente.
+
+\section{Convenciones de Git y Flujo de Trabajo}
+
+\subsection{Ramas (Branches)}
+Para mantener un flujo de trabajo ordenado y facilitar la integración continua por lo que es vital que los desarrolladores dominen el sistema de versiones Git y sepan como funciona Github, se propone el siguiente esquema de ramas:
+
+\begin{itemize}
+    \item \textbf{main} o \textbf{master}: Rama estable que contiene la versión en producción.
+    \item \textbf{develop}: Rama principal de desarrollo donde se integran las nuevas funcionalidades antes de pasar a producción.
+    \item \textbf{feature/nombre-de-la-funcionalidad}: Ramas temporales para desarrollar nuevas funcionalidades. Deben crearse desde \textbf{develop} y fusionarse de vuelta a ella.
+    \item \textbf{bugfix/nombre-del-bug}: Ramas temporales para corregir errores específicos.
+    \item \textbf{hotfix/nombre-del-hotfix}: Ramas para correcciones urgentes sobre la rama \textbf{main}.
+\end{itemize}
+
+\subsection{Commits}
+Cada commit debe ser claro, conciso y descriptivo. Se recomienda seguir el siguiente formato:
+
+\begin{verbatim}
+tipo: descripción corta
+\end{verbatim}
+
+\textbf{Tipos de commit que podrian hacerse:}
+\begin{itemize}
+    \item \textbf{funcionalidad}: Nueva funcionalidad.
+    \item \textbf{fix}: Corrección de errores.
+    \item \textbf{docs}: Cambios en documentación.
+    \item \textbf{refactorización}: Refactorización de código sin agregar funcionalidades ni corregir bugs.
+    \item \textbf{test}: Agregar o modificar pruebas.
+    \item \textbf{mant}: Tareas de mantenimiento, configuración o dependencias.
+\end{itemize}
+
+\textbf{Ejemplo:}
+\begin{verbatim}
+funcionalidad: agregar endpoint para registrar usuarios
+fix: corregir validación de email en el login
+docs: actualizar README con instrucciones de despliegue
+\end{verbatim}
+
+\subsection{Pull Request (PR) antes de producción}
+Antes de fusionar cualquier cambio a la rama \textbf{main}, se debe realizar un Pull Request siguiendo estas reglas:
+
+\begin{itemize}
+    \item La rama base del PR debe ser \textbf{develop} para integración continua, o \textbf{main} solo para hotfixes listos para producción.
+    \item Título del PR: claro y descriptivo, siguiendo el formato de commit.
+    \item Descripción del PR: debe incluir
+    \begin{itemize}
+        \item Resumen de la funcionalidad o bug corregido.
+        \item Referencias a issues o tickets relacionados.
+        \item Lista de cambios relevantes.
+        \item Instrucciones de prueba o validación si aplica.
+    \end{itemize}
+    \item Todo PR debe ser revisado por al menos un lider del equipo o area antes de fusionarse con la rama principal.
+    \item Realizar merge solo cuando el PR ha pasado las pruebas y la revisión de código excepto en casos especiales.
+\end{itemize}
+
+\section{Conclusión}
+La elección de \textbf{Vue.js} y \textbf{Laravel} permite al equipo aprovechar su experiencia previa en JavaScript y PHP, garantizando una integración eficiente entre frontend y backend, facilitando  el desarrollo de nuevas funcionalidades asegurandonos rápidez y consistencia, minimizando la curva de aprendizaje de los devs.
+
+La contenerización de la aplicación junto con la base de datos \textbf{MariaDB} permite crear entornos de desarrollo y pruebas reproducibles, agilizando la implementación de nuevas características y la ejecución de pruebas automatizadas. Esta estrategia asegura que los desarrolladores puedan levantar el entorno completo de manera sencilla y consistente, sin depender de configuraciones locales específicas.
+
+Asimismo, la propuesta de estructura del repositorio de Git y las convenciones de trabajo (branches, commits y Pull Requests) promueven claridad, mantenibilidad y colaboración efectiva entre los miembros del equipo. Establecer un flujo de trabajo basado en ramas de desarrollo, ramas de funcionalidades y ramas de hotfix, junto con commits claros y descriptivos, asegura que los cambios se integren de forma controlada y segura antes de pasar a producción.
+
+En conjunto, estas decisiones permiten que el proyecto sea escalable, fácil de mantener y flexible frente a cambios futuros, garantizando una base sólida tanto para el desarrollo como para el despliegue de la aplicación en entornos de producción y pruebas.
+\end{document}
+
