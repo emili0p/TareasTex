@@ -46,6 +46,43 @@ La base de datos seleccionada es \textbf{MariaDB}, la cual:
     \item Se puede desplegar de forma contenerizada junto con la aplicación, permitiendo pruebas rápidas y entornos reproducibles.
     \item Facilita la administración y migración de datos durante el desarrollo y pruebas.
 \end{itemize}
+\section{Arquitectura del Sistema}
+
+\subsection{Modelo Arquitectónico}
+
+Se adopta una arquitectura de tipo \textbf{Monolito Modular}, donde el backend se organiza por dominios funcionales (Students, Teachers, Subjects, Grades, Auth). Cada módulo encapsula:
+
+\begin{itemize}
+    \item Controladores (capa HTTP)
+    \item Servicios (lógica de negocio)
+    \item Modelos (persistencia)
+    \item Requests (validaciones)
+    \item Policies (autorización)
+    \item Resources (transformación de salida JSON)
+\end{itemize}
+
+Este enfoque permite alta cohesión interna y bajo acoplamiento entre módulos.
+
+\subsection{Flujo de una Petición}
+
+\begin{enumerate}
+    \item Cliente realiza petición HTTP.
+    \item Laravel recibe la petición mediante rutas API.
+    \item Se ejecuta validación mediante Form Request.
+    \item El Controller delega la lógica al Service correspondiente.
+    \item El modelo interactúa con la base de datos.
+    \item Se retorna respuesta estructurada mediante API Resource.
+\end{enumerate}
+
+\subsection{Versionado de API}
+
+Todas las rutas estarán bajo el prefijo:
+
+\begin{verbatim}
+/api/v1/
+\end{verbatim}
+
+Esto permite mantener compatibilidad futura en caso de evolución del sistema.
 
 \subsection{Justificación del Backend}
 El \textbf{backend en Laravel} fue seleccionado considerando:
@@ -53,6 +90,115 @@ El \textbf{backend en Laravel} fue seleccionado considerando:
     \item El equipo ya ha trabajado con \textbf{PHP} y conexión a bases de datos relacionales en materias anteriores, lo que hace sencilla la adopción de Laravel.
     \item Laravel proporciona una estructura organizada de \textbf{Controllers, Models y Services}, que facilita la implementación de la lógica de negocio y la gestión de rutas API.
     \item Permite integración rápida con bases de datos SQL, como \textbf{MariaDB o cualquier BD relacional, sin mucho problema de migración}.
+\end{itemize}
+\section{Estándares de Código}
+
+\subsection{Backend (Laravel)}
+
+El código backend deberá cumplir con el estándar \textbf{PSR-12} para garantizar consistencia y mantenibilidad de la base de codigo.
+
+\subsubsection*{Convenciones Generales}
+
+\begin{itemize}
+    \item Indentación de 4 espacios.
+    \item Clases en formato PascalCase.
+    \item Métodos y variables en camelCase.
+    \item Nombres descriptivos y semánticos coherentes.
+    \item No se permiten variables ambiguas (ej. \$data, \$tmp, \$prueba, \$algo, \$s = numero magico,).
+\end{itemize}
+
+\subsubsection*{Organización Arquitectónica}
+
+\begin{itemize}
+    \item Los Controllers no deben contener lógica de negocio pues realizaran otras funciones y el objetivo es que sea modular.
+    \item Toda lógica de negocio debe implementarse en Servicios.
+    \item Las validaciones deben implementarse mediante Form Requests.
+    \item La autorización debe centralizarse en policies de seguridad.
+    \item Las respuestas JSON deben estructurarse usando API Resources para respuestas con sentido.
+\end{itemize}
+
+\subsubsection*{Buenas Prácticas}
+
+\begin{itemize}
+    \item Uso obligatorio de tipado estricto cuando sea posible es decir no declarar cosas magicamente.
+    \item Uso de transacciones para operaciones críticas, evitando inyecciones de SQL.
+    \item Manejo consistente de excepciones para detectar errores .
+    \item Prohibido acceso directo a la base de datos desde controladores, quitando vulnerabilidades.
+\end{itemize}
+
+\subsection{Frontend (Vue.js)}
+
+\subsubsection*{Convenciones Generales}
+
+\begin{itemize}
+    \item Componentes en PascalCase.
+    \item Separación clara entre lógica y presentación.
+    \item Uso obligatorio de ESLint y Prettier para un codigo consistente.
+    \item Manejo de estados bien documentados.
+\end{itemize}
+
+\subsubsection*{Organización}
+
+\begin{itemize}
+    \item Estructura modular por dominio funcional.
+    \item Separación entre componentes reutilizables y vistas.
+    \item Llamadas HTTP centralizadas en carpeta api/.
+\end{itemize}
+
+\subsection{Herramientas de Calidad}
+
+\begin{itemize}
+  \item Backend: Laravel Pint para formateo automático (disponible en vscode).
+  \item Backend: PHPStan para análisis estático (disponible en vscode).
+    \item Frontend: ESLint y Prettier para consistencia.
+    \item Integración de validación automática en Pull Requests.
+\end{itemize}
+
+\section{Seguridad y Control de Acceso}
+
+El sistema implementará los siguientes mecanismos de seguridad:
+
+\begin{itemize}
+    \item Autenticación basada en tokens.
+    \item Autorización basada en roles (ADMIN, DOCENTE, ALUMNO).
+    \item Middleware para protección de rutas sensibles para que no sean incertepcetadas.
+    \item Validación obligatoria en todas las entradas de datos.
+    \item Manejo estandarizado de errores HTTP (200,400,501, etc).
+\end{itemize}
+
+Se restringirán métodos HTTP inseguros como TRACE.
+\section{Estrategia de Testing}
+
+Se implementarán los siguientes tipos de pruebas:
+
+\begin{itemize}
+    \item Pruebas Unitarias para lógica de negocio en Services.
+    \item Pruebas de Integración para endpoints REST, para asegurar que los datos devueltos son concisos.
+    \item Validación automática en Pull Requests mediante ejecución de tests de Github actions.
+\end{itemize}
+
+Una funcionalidad no podrá integrarse a producción sin pasar las pruebas automatizadas.
+\section{Principios Arquitectónicos}
+
+La arquitectura del sistema se basa en los siguientes principios:
+
+\begin{itemize}
+    \item Separación de responsabilidades de cada zona del desarrollo.
+    \item Alta cohesión.
+    \item Código mantenible legible y extensible.
+    \item Minimización del riesgo técnico que podria generar una gran deuda tecnica.
+\end{itemize}
+\section{Riesgos Técnicos y Mitigación}
+
+\begin{itemize}
+    \item \textbf{Riesgo:} Baja experiencia avanzada en Vue. \\
+    \textbf{Mitigación:} Estándares de código estrictos y revisión cruzada.
+
+    \item \textbf{Riesgo:} Crecimiento futuro del sistema. \\
+    \textbf{Mitigación:} Organización modular preparada para futura separación en microservicios.
+
+    \item \textbf{Riesgo:} Dependencia del stack PHP. \\
+    \textbf{Mitigación:} Uso de estándares REST que permiten migración futura a otro stack en Java o otra tecnologías robusta.
 \end{itemize}
 
 \begin{figure}[h!]
@@ -152,6 +298,17 @@ Antes de fusionar cualquier cambio a la rama \textbf{main}, se debe realizar un 
     \end{itemize}
     \item Todo PR debe ser revisado por al menos un lider del equipo o area antes de fusionarse con la rama principal.
     \item Realizar merge solo cuando el PR ha pasado las pruebas y la revisión de código excepto en casos especiales.
+\end{itemize}
+\section{¿Cuando algo esta hecho?}
+
+Una funcionalidad se considera terminada cuando:
+
+\begin{itemize}
+    \item Cumple los estándares definidos.
+    \item Incluye validaciones correspondientes.
+    \item Tiene pruebas automatizadas.
+    \item Fue revisada mediante Pull Request.
+    \item No genera errores en análisis estático.
 \end{itemize}
 
 \section{Conclusión}
