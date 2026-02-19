@@ -46,22 +46,53 @@ La base de datos seleccionada es \textbf{MariaDB}, la cual:
     \item Se puede desplegar de forma contenerizada junto con la aplicación, permitiendo pruebas rápidas y entornos reproducibles.
     \item Facilita la administración y migración de datos durante el desarrollo y pruebas.
 \end{itemize}
-\section{Arquitectura del Sistema}
 
-\subsection{Modelo Arquitectónico}
+\subsection{Nota sobre Modelado y Motor de Base de Datos}
 
-Se adopta una arquitectura de tipo \textbf{Monolito Modular}, donde el backend se organiza por dominios funcionales (Students, Teachers, Subjects, Grades, Auth). Cada módulo encapsula:
+El modelo lógico de la base de datos fue representado mediante herramientas de diagramación compatibles con SQL Server únicamente con fines de modelado visual y estructuración conceptual.
+
+La implementación real del sistema se realizará sobre \textbf{MariaDB}, utilizando el ORM \textbf{Eloquent} provisto por Laravel. 
+
+El diseño propuesto es compatible con cualquier sistema gestor de bases de datos relacional que soporte:
 
 \begin{itemize}
-    \item Controladores (capa HTTP)
-    \item Servicios (lógica de negocio)
-    \item Modelos (persistencia)
-    \item Requests (validaciones)
-    \item Policies (autorización)
-    \item Resources (transformación de salida JSON)
+    \item Integridad referencial mediante llaves foráneas.
+    \item Restricciones \texttt{UNIQUE} y \texttt{CHECK}.
+    \item Índices en campos de alta frecuencia de consulta.
+    \item Transacciones ACID.
 \end{itemize}
 
+El modelo se encuentra normalizado hasta \textbf{Tercera Forma Normal (3FN)}, garantizando:
+
+\begin{itemize}
+    \item Eliminación de redundancia innecesaria.
+    \item Separación adecuada de responsabilidades entre entidades.
+    \item Consistencia estructural y escalabilidad futura.
+\end{itemize}
+
+Se adopta una arquitectura de tipo \textbf{Monolito Modular}, donde el backend se organiza por dominios funcionales alineados al modelo académico definido: 
+
+\begin{itemize}
+    \item Gestión de Usuarios y Roles
+    \item Gestión Académica (Carreras, Materias, Grupos, Periodos)
+    \item Inscripciones y Calificaciones
+    \item Tutorías
+    \item Créditos Complementarios
+    \item Bitácora y Auditoría
+\end{itemize}
+
+Cada módulo encapsula:
+
 Este enfoque permite alta cohesión interna y bajo acoplamiento entre módulos.
+
+
+\section{Arquitectura del Sistema}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{/home/emilio/Descargas/arqr.drawio.png} 
+    \caption{Diagrama de arquitectura del software}
+    \label{fig:arquitectura}
+\end{figure}
 
 \subsection{Flujo de una Petición}
 
@@ -201,13 +232,6 @@ La arquitectura del sistema se basa en los siguientes principios:
     \textbf{Mitigación:} Uso de estándares REST que permiten migración futura a otro stack en Java o otra tecnologías robusta.
 \end{itemize}
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{/home/emilio/Descargas/arqr.drawio.png} 
-    \caption{Diagrama de arquitectura del software}
-    \label{fig:arquitectura}
-\end{figure}
-
 \section{Estructura del Repositorio}
 Se propone una organización estándar para el repositorio Git del proyecto, con la siguiente estructura de carpetas:
 
@@ -310,6 +334,19 @@ Una funcionalidad se considera terminada cuando:
     \item Fue revisada mediante Pull Request.
     \item No genera errores en análisis estático.
 \end{itemize}
+\section{Alineación con el Modelo Académico}
+
+La arquitectura técnica propuesta se encuentra alineada con el modelo lógico previamente definido, el cual contempla:
+
+\begin{itemize}
+    \item 14 entidades base del sistema académico.
+    \item 2 entidades adicionales para la gestión de Créditos Complementarios.
+    \item Relación académica principal: Carrera $\rightarrow$ Materia $\rightarrow$ Grupo $\rightarrow$ Inscripción $\rightarrow$ Calificación.
+    \item Tutoría como componente complementario vinculado a Alumno, Docente y Periodo.
+    \item Bitácora transversal para auditoría de acciones del sistema.
+\end{itemize}
+
+Esta alineación garantiza coherencia entre el diseño funcional, el modelo de datos y la implementación técnica.
 
 \section{Conclusión}
 La elección de \textbf{Vue.js} y \textbf{Laravel} permite al equipo aprovechar su experiencia previa en JavaScript y PHP, garantizando una integración eficiente entre frontend y backend, facilitando  el desarrollo de nuevas funcionalidades asegurandonos rápidez y consistencia, minimizando la curva de aprendizaje de los desarrolladores.
