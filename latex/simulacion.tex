@@ -1,0 +1,129 @@
+\documentclass[12pt]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\geometry{a4paper, margin=2.5cm}
+
+\title{Actividad de Aprendizaje 1.3 \\ 
+Simulación de un Controlador Proporcional-Derivativo (PD) \\ 
+Matemáticas para Ciencia de Datos 8SA 2026A}
+
+\author{Emilio Izquierdo Montero}
+\date{24 de febrero de 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+
+El presente trabajo consiste en la simulación de un controlador Proporcional-Derivativo (PD) aplicado al control de la velocidad de un vehículo. 
+El objetivo es aplicar el concepto de derivada como tasa de cambio en un sistema dinámico modelado en tiempo discreto.
+
+\section{Modelo Matemático del Sistema}
+
+Se modela la dinámica del vehículo mediante la ecuación diferencial:
+
+\begin{equation}
+m \frac{dv}{dt} = u - b v
+\end{equation}
+
+Donde:
+
+\begin{itemize}
+\item $v$ = velocidad del vehículo (magnitud controlada)
+\item $u$ = fuerza aplicada (señal de control)
+\item $m$ = masa del vehículo
+\item $b$ = coeficiente de fricción
+\end{itemize}
+
+Para implementar el sistema en tiempo discreto se utiliza una aproximación por diferencias finitas:
+
+\begin{equation}
+v[k+1] = v[k] + \Delta t \cdot \frac{1}{m} (u[k] - b v[k])
+\end{equation}
+
+\section{Controlador PD en Tiempo Discreto}
+
+El error se define como:
+
+\begin{equation}
+e[k] = r[k] - v[k]
+\end{equation}
+
+La derivada numérica del error se aproxima como:
+
+\begin{equation}
+\frac{de}{dt} \approx \frac{e[k] - e[k-1]}{\Delta t}
+\end{equation}
+
+El controlador PD discreto se define como:
+
+\begin{equation}
+u[k] = K_p e[k] + K_d \frac{e[k] - e[k-1]}{\Delta t}
+\end{equation}
+
+Donde:
+
+\begin{itemize}
+\item $K_p$ = Ganancia proporcional
+\item $K_d$ = Ganancia derivativa
+\end{itemize}
+
+\section{Parámetros Utilizados}
+
+\begin{itemize}
+\item Masa $m = 1000$ kg
+\item Fricción $b = 50$
+\item Tiempo de muestreo $\Delta t = 0.1$ s
+\item Referencia $r = 20$ m/s
+\item $K_p = 500$
+\item $K_d = 100$
+\end{itemize}
+
+\section{Resultados}
+
+\subsection{Velocidad del Sistema}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/proyectos/pd/velocidad_vs_tiempo.png}
+\caption{Respuesta de la velocidad del sistema ante una referencia constante.}
+\end{figure}
+
+\subsection{Señal de Control}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/proyectos/pd/senal_de_control.png}
+\caption{Señal de control generada por el controlador PD.}
+\end{figure}
+
+\section{Análisis del Comportamiento}
+
+Se observa que:
+
+\begin{itemize}
+\item La acción proporcional ($K_p$) reduce el error rápidamente.
+\item La acción derivativa ($K_d$) disminuye el sobreimpulso y mejora la estabilidad.
+\item El sistema alcanza la referencia con un tiempo de establecimiento corto.
+\end{itemize}
+
+Si $K_p$ aumenta excesivamente, el sistema puede presentar oscilaciones.
+Si $K_d$ es demasiado grande, puede amplificar el ruido y tambien puede generar inestabilidad.
+
+\section{Conclusión}
+
+El controlador PD permite regular eficazmente la velocidad del sistema modelado. 
+La derivada actúa como un mecanismo de amortiguamiento que mejora la estabilidad del sistema dinámico en constante cambio.
+
+Se comprobó la importancia del ajuste adecuado de las ganancias $K_p$ y $K_d$ para lograr un comportamiento estable y eficiente.
+
+\end{document}
