@@ -1,0 +1,237 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{enumitem}
+
+\geometry{margin=1in}
+\onehalfspacing
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Fundamentos de Scala}
+\lhead{Tema 2}
+\rfoot{\thepage}
+
+\title{
+    \Huge Fundamentos de Scala en REPL \\
+    \Large Tema 2
+}
+\author{
+    Nombre del Alumno: Emilio Izquierdo Montero  \\
+    Materia: Programación Funcional \\
+    Profesor: Jose Octavio Guzman Peñaloza
+}
+
+\date{Fecha de entrega: 3/3/26}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% ----------------------------------------
+\section*{Introducción}
+
+Este documento presenta el desarrollo de los ejercicios realizados en el REPL de Scala con el objetivo de demostrar comprensión sobre que en scala:
+
+\begin{itemize}
+    \item Todo es objeto
+    \item Inferencia de tipos
+    \item Funciones anidadas
+    \item Imports locales
+    \item Uso del subrayado \_
+    \item Interoperabilidad con clases Java
+\end{itemize}
+
+\newpage
+
+% ----------------------------------------
+\section{Parte 1 - Objetos e Inferencia de Tipos (20\%)}
+
+\subsection*{Captura del REPL}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/scala1.png}
+    \caption{Definición de variable de diferentes tipos y como scala infiere de que tipo son sin declararlo}
+\end{figure}
+
+\vspace{1cm}
+
+\subsection*{Explicación}
+
+\noindent
+¿Por que en scala todo es un objeto?, por que al derivar de java este siempre se enfoco en ser un lenguaje orientado o objetos puro con algunas inferencias en otros paradigmas como la programación funcional diseñado incluso para que cosas como los numeros sean instencias de objetos , cosa que en java no pasa
+
+\vspace{2cm}
+
+\newpage
+
+% ----------------------------------------
+\section{Parte 2 - Funciones Anidadas (30\%)}
+
+\subsection*{Captura del REPL}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/scala4.png}
+    \includegraphics[width=0.9\textwidth]{img/scala2.png}
+    \caption{Definición de calcularPromedioFinal y prueba de alcance}
+\end{figure}
+
+\vspace{1cm}
+
+\subsection*{Explicación}
+
+\noindent
+Explique cómo se demuestra que las funciones internas no son accesibles fuera de la función principal y qué ventaja de diseño representa esto.
+Las funciones internas se definieron dentro de calcularPromedioFinal, por lo que su alcance está limitado a esa función. Esto se demuestra cuando al intentar llamarlas directamente desde el REPL (por ejemplo, promedio(80,90,100)), el compilador genera un error indicando que no están definidas en ese ámbito.
+
+Esto representa una ventaja de diseño porque permite encapsular la lógica auxiliar, evitando que otras partes del programa accedan a funciones que solo tienen sentido dentro de la función principal. De esta manera se mejora la organización, se reduce el espacio de nombres global y se favorece la modularidad del código.
+
+\vspace{2cm}
+
+\newpage
+
+% ----------------------------------------
+\section{Parte 3 - Imports Locales e Interoperabilidad con Java (15\%)}
+
+\subsection*{Captura del REPL del ejercicio}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/scala5.png}
+    \includegraphics[width=0.9\textwidth]{img/scala6.png}
+    \caption{Uso de import local y java.time.LocalDate}
+\end{figure}
+
+\vspace{1cm}
+
+\subsection*{Explicación}
+
+\noindent
+Explique cómo Scala permite utilizar clases de Java y cuál es la ventaja del import local.
+
+Scala permite usar clases de java al ser un superset de el, es decir cierto codigo compatible en java puede correr en scala sin problema (aunque no visceversa), haciendo que la libreria estandar del propio lenguaje sea mas liviano y no tener que definir cosas que ya existen en java.
+
+\vspace{2cm}
+
+\newpage
+% ----------------------------------------
+\section{Parte 4 - Uso del Subrayado \_ (15\%)}
+
+\subsection*{Captura de codigo}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/scala7.png}
+    \caption{Uso de import "\_",, placeholder y integral en codigo}
+\end{figure}
+
+\vspace{1cm}
+
+\subsection*{Integrales Calculadas}
+
+\noindent
+A continuación se muestran las integrales evaluadas en el REPL utilizando la función \texttt{integrar}:
+\begin{itemize}
+    \item $\displaystyle \int_{0}^{\pi} \sin(x)\,dx \approx 2.0$
+    
+    \vspace{0.5cm}
+    
+    \item $\displaystyle \int_{0}^{5} (x^2 + 2x)\,dx \approx 66.67$
+\end{itemize}
+\vspace{1cm}
+
+\noindent
+(Evidencia mostrada en la captura del REPL.)
+
+\vspace{1cm}
+\subsection*{Captura de REPL}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/scala8.png}
+    \caption{Uso de la funcion integral en el REPL,  con con una lambda incluida :), ambos resultados estan muy cerca del valor real de la integral }
+\end{figure}
+
+\vspace{1cm}
+
+
+\subsection*{Explicación}
+
+\noindent
+En esta parte se utilizaron dos usos distintos del símbolo \_:
+
+\begin{enumerate}
+    \item Como \textbf{wildcard import}: \texttt{import scala.math.\_}, donde \_ significa que se importan todas las funciones de la liberia math de scala.
+    \item Como \textbf{placeholder en funciones}: por ejemplo en expresiones como \texttt{sin(\_)} o en lambdas compactas, donde \_ representa el parámetro implícito de la función.
+\end{enumerate}
+
+\vspace{2cm}
+
+\newpage
+% ----------------------------------------
+\section{Preguntas de Reflexión Conceptual (20\%)}
+
+\subsection*{1. ¿Por qué se dice que “todo es objeto” en Scala?}
+
+Por que en Scala , como en java todo es un objeto, pero este tiene otros enfoques de diseño
+\vspace{1cm}
+
+\subsection*{2. ¿Qué ventaja tiene la inferencia de tipos si el lenguaje sigue siendo estático?}
+
+Aunque Scala es un lenguaje estático, la inferencia de tipos ofrece la ventaja de reducir la cantidad de código repetitivo sin perder seguridad en tiempo de compilación ejemplo definiendo una variable y luego llamandola, el compilador deduce automáticamente el tipo de las variables y expresiones, pero sigue verificando los tipos antes de ejecutar el programa cosa que en lenguajes como C y C ++ no pasa incluso tampoco en Java.
+
+\vspace{1cm}
+
+\subsection*{3. ¿Qué problema de diseño evita el uso de funciones anidadas?}
+
+Codigo robusto, aveces muy dificil de entender, quitando capas de complejidad y lineas de codigo a cosas que no la necesitan
+
+\vspace{1cm}
+
+\subsection*{4. Compare el sistema de imports en Java y Scala. ¿Qué ventaja práctica tiene el import local?}
+
+En Java, los \textit{imports} solo pueden declararse al inicio del archivo y aplican a toda la clase. Esto significa que cualquier dependencia importada queda disponible en todo el archivo, incluso si solo se usa en un método específico.
+
+En cambio, Scala permite realizar \textit{imports locales}, es decir, dentro de funciones o bloques de código. Esto permite limitar el alcance de una dependencia únicamente al lugar donde realmente se necesita.
+
+La ventaja práctica del \textit{import local} es que mejora la organización y el encapsulamiento del código, reduce la contaminación del espacio de nombres global y hace más claro qué dependencias utiliza cada sección del programa. Además, facilita el mantenimiento y la lectura del código.
+\vspace{1cm}
+
+\subsection*{5. El símbolo \_ tiene múltiples significados. ¿Por qué cree que Scala reutiliza el mismo símbolo en diferentes contextos?}
+Por una propiedad muy especial de Scala llamada sobrecarga de operadores que dependiendo del contexto en el que un operador se instancie puede actuar de una manera deseada al tener diferentes metodos, por que tambien es una clase 
+\vspace{1cm}
+
+\subsection*{6. ¿Cómo demuestra este ejercicio que Scala combina programación orientada a objetos y funcional?}
+Este ejercicio demuestra que Scala combina ambos paradigmas porque en todo momento se están usando características de los dos. Por ejemplo, cuando definimos variables y usamos métodos sobre ellas, estamos trabajando bajo la idea de que todo es un objeto, También cuando usamos clases como \texttt{LocalDate} de Java, se ve claramente la parte orientada a objetos y la integración con la JVM.
+
+Al mismo tiempo, utilizamos funciones como valores, por ejemplo cuando pasamos una función a \texttt{integrar} con el tipo \texttt{Double => Double}. También usamos funciones anidadas y expresiones lambda como \texttt{x => x * x + 2 * x}, lo cual es propio del paradigma funcional.
+
+En general, el ejercicio muestra que en Scala no hay que elegir entre orientación a objetos o funcional, sino que se pueden usar ambas formas de programar juntas dentro del mismo código de manera natural.
+\vspace{1cm}
+
+\newpage
+
+% ----------------------------------------
+\section*{Código Final}
+
+El código final desarrollado en el REPL de Scala y utilizado para todos los ejercicios de este documento se encuentra disponible en el repositorio de GitHub:
+
+\begin{itemize}
+    \item Repositorio: \href{https://github.com/emili0p/funcprog/tree/master/tareas}{https://github.com/emili0p/funcprog/tree/master/tareas}
+\end{itemize}
+
+\noindent
+Se incluyen archivos \texttt{.scala} correspondientes a cada ejercicio, que pueden descargarse y ejecutarse directamente en el REPL de Scala para reproducir los resultados mostrados en las capturas de pantalla.
+\end{document}
