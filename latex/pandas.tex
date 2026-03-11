@@ -1,0 +1,170 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{margin=1in}
+
+\title{Reporte de como se usa matplotlib y pandas}
+\author{Reporte de Actividad}
+\date{\today}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{green!50!black},
+    breaklines=true
+}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+
+En esta actividad se realizó un análisis exploratorio de datos utilizando las librerías
+\textbf{Pandas} y \textbf{Matplotlib} en Python, el dataset utilizado contiene información
+sobre viviendas, incluyendo variables como precio, número de habitaciones,
+pisos y otras características estructurales.
+
+El objetivo fue explorar los datos com las librerías de python para poder , calcular estadísticas básicas y generar
+visualizaciones para identificar patrones en la información imprencidible en ia.
+
+\section{Carga de librerías}
+
+Primero se importaron las librerías necesarias para el análisis.
+
+\begin{lstlisting}
+import pandas as pd
+import matplotlib.pyplot as plt
+\end{lstlisting}
+
+\section{Carga del dataset}
+
+Se utilizó la función \texttt{read\_csv()} de Pandas para cargar el archivo
+\texttt{housedata\_audit\_v1.csv} en un DataFrame.
+
+\begin{lstlisting}
+df = pd.read_csv("housedata_audit_v1.csv")
+df.head()
+\end{lstlisting}
+
+Esta instrucción permite visualizar las primeras filas del dataset.
+
+\section{Exploración de los datos}
+
+Para conocer la estructura del dataset se utilizaron varias funciones de Pandas.
+
+\begin{lstlisting}
+df.shape
+df.columns
+df.info()
+\end{lstlisting}
+
+\begin{itemize}
+\item \textbf{df.shape} muestra el número de filas y columnas.
+\item \textbf{df.columns} muestra los nombres de las variables.
+\item \textbf{df.info()} proporciona información sobre los tipos de datos.
+\end{itemize}
+
+\section{Estadísticas descriptivas}
+
+Se calcularon estadísticas básicas de las variables numéricas utilizando:
+
+\begin{lstlisting}
+df.describe()
+\end{lstlisting}
+
+Esto permite obtener información como:
+
+\begin{itemize}
+\item media
+\item desviación estándar
+\item valor mínimo
+\item valor máximo
+\end{itemize}
+
+\section{Análisis de valores nulos}
+
+Para identificar datos faltantes se utilizó:
+
+\begin{lstlisting}
+df.isnull().sum()
+\end{lstlisting}
+
+Esto muestra cuántos valores faltantes existen en cada columna.
+
+\section{Visualización de datos}
+
+Se generaron varias gráficas utilizando Matplotlib.
+
+\subsection{Histograma del precio}
+
+\begin{lstlisting}
+plt.figure()
+
+df['Meta_Dato_01'].hist(bins=30)
+
+plt.title("Distribución del precio de casas")
+plt.xlabel("Precio")
+plt.ylabel("Frecuencia")
+
+plt.show()
+\end{lstlisting}
+
+Este gráfico permite observar la distribución de los precios de las viviendas.
+
+\subsection{Relación entre habitaciones y precio}
+
+\begin{lstlisting}
+plt.figure()
+
+plt.scatter(df['bedrooms'], df['Meta_Dato_01'])
+
+plt.title("Habitaciones vs Precio")
+plt.xlabel("Número de habitaciones")
+plt.ylabel("Precio")
+
+plt.show()
+\end{lstlisting}
+
+La gráfica de dispersión permite identificar si existe relación entre
+el número de habitaciones y el precio de las casas.
+
+\subsection{Precio promedio por número de pisos}
+
+Primero se calculó el promedio de precio por número de pisos.
+
+\begin{lstlisting}
+precio_promedio = df.groupby('floors')['Meta_Dato_01'].mean()
+\end{lstlisting}
+
+Posteriormente se generó una gráfica de barras.
+
+\begin{lstlisting}
+plt.figure()
+
+plt.bar(precio_promedio.index, precio_promedio.values)
+
+plt.title("Precio promedio por número de pisos")
+plt.xlabel("Pisos")
+plt.ylabel("Precio promedio")
+
+plt.show()
+\end{lstlisting}
+
+\section{Conclusiones}
+
+El análisis exploratorio permitió identificar características importantes
+del dataset de viviendas. Las herramientas de Pandas facilitaron la manipulación
+y análisis de los datos, mientras que Matplotlib permitió visualizar patrones
+como la distribución de precios y la relación entre distintas variables.
+
+Estas técnicas son fundamentales en las etapas iniciales de proyectos de
+aprendizaje automático y análisis de datos.
+
+\end{document}
