@@ -1,0 +1,141 @@
+\documentclass[12pt]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{helvet}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\renewcommand{\familydefault}{\sfdefault} % Arial-like
+
+\geometry{letterpaper, margin=2.5cm}
+\setlength{\parindent}{0pt} % Sin sangría
+\onehalfspacing
+
+\pagestyle{fancy}
+\fancyhf{}
+\rfoot{\fontsize{8}{10}\selectfont \thepage}
+
+\title{Análisis del Protocolo SNMP y Vulnerabilidades en SNMPv2}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section*{\textbf{Introducción}}
+\addcontentsline{toc}{section}{Introducción}
+
+El protocolo Simple Network Management Protocol (SNMP) es una herramienta esencial en la administración de redes modernas, ya que permite supervisar, controlar y diagnosticar dispositivos conectados dentro de una infraestructura. Su uso es ampliamente extendido en entornos empresariales y académicos debido a su simplicidad y eficiencia.
+
+En este documento se analiza el funcionamiento general del protocolo SNMP, describiendo sus componentes, operaciones y flujo de comunicación. Asimismo, se presenta una implementación básica en sistemas Unix, por ser mi sistema operativo principal, lo que permite comprender su uso práctico en entornos reales.
+
+De igual manera, se examinan las vulnerabilidades presentes en versiones antiguas como SNMPv2, particularmente aquellas relacionadas con la transmisión de información en texto plano. Se describe un escenario donde un atacante puede interceptar tráfico mediante técnicas de sniffing para obtener credenciales y acceder a información sensible.
+
+Finalmente, se proponen medidas de mitigación que permiten fortalecer la seguridad del protocolo, destacando la importancia de utilizar versiones más seguras como SNMPv3. Este análisis permite comprender tanto la utilidad del protocolo como los riesgos asociados a una configuración inadecuada.
+
+\newpage
+
+\section*{\textbf{Conceptos}}
+\addcontentsline{toc}{section}{Conceptos}
+
+SNMP es un protocolo de la capa de aplicación que permite la gestión remota de dispositivos dentro de una red IP. Su arquitectura se basa en tres componentes principales: el gestor (manager), el agente (agent) y la base de información de administración (MIB).
+
+El gestor es el sistema encargado de realizar consultas, mientras que el agente es el software que reside en el dispositivo administrado y responde a dichas solicitudes. La MIB es una base de datos estructurada en forma de árbol que contiene variables identificadas mediante OID (Object Identifier).
+
+Las principales versiones del protocolo son SNMPv1, SNMPv2c y SNMPv3. Las dos primeras carecen de mecanismos de seguridad robustos, ya que utilizan cadenas de comunidad como método de autenticación. Por otro lado, SNMPv3 introduce autenticación, integridad y cifrado.
+
+SNMP opera sobre UDP, utilizando el puerto 161 para consultas y el puerto 162 para notificaciones.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{/home/emilio/SNMP_Components.jpg}
+    \caption{Arquitectura básica del protocolo SNMP}
+\end{figure}
+
+\newpage
+
+\section*{\textbf{Protocolo SNMP}}
+\addcontentsline{toc}{section}{Protocolo SNMP}
+
+\textbf{Operaciones básicas}
+
+Las operaciones principales de SNMP incluyen GET, GET-NEXT, GET-BULK, SET y TRAP. Estas permiten obtener información, recorrer la MIB, modificar valores y recibir notificaciones de eventos.
+
+\textbf{Implementación en Unix}
+
+En sistemas Unix/Linux, SNMP se implementa comúnmente mediante Net-SNMP. Su instalación y configuración permiten habilitar el monitoreo del sistema.
+
+Ejemplo de consulta:
+
+\begin{verbatim}
+snmpwalk -v2c -c public localhost
+\end{verbatim}
+
+\textbf{Flujo de comunicación}
+
+El flujo consiste en que el gestor envía una solicitud al agente, este consulta la MIB y responde con la información solicitada. En algunos casos, el agente envía notificaciones sin solicitud previa.
+
+\textbf{Vulnerabilidad en SNMPv2}
+
+SNMPv2 presenta una vulnerabilidad importante debido al uso de comunidades en texto plano. Esto permite que un atacante capture paquetes de red utilizando herramientas como tcpdump.
+
+Ejemplo:
+
+\begin{verbatim}
+tcpdump -i eth0 port 161 -A
+\end{verbatim}
+
+Un paquete capturado puede mostrar la comunidad utilizada, lo que permite reutilizarla para acceder al sistema.
+
+\textbf{Escenario de ataque}
+
+El atacante se conecta a la red, captura tráfico, obtiene la comunidad y realiza consultas SNMP para obtener información sensible del dispositivo.
+
+\textbf{Mitigación}
+
+Se recomienda utilizar SNMPv3, restringir accesos, cambiar comunidades por defecto y monitorear la red.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{/home/emilio/Ejemplo.png}
+    \caption{protocolo SNMP hablando}
+\end{figure}
+\newpage
+
+\section*{\textbf{Conclusiones}}
+\addcontentsline{toc}{section}{Conclusiones}
+
+El protocolo SNMP es una herramienta fundamental en la administración de redes, pero su uso en versiones antiguas representa un riesgo significativo. La falta de mecanismos de seguridad en SNMPv2 permite ataques de sniffing que comprometen la información del sistema.
+
+Es importante implementar medidas de seguridad adecuadas, como el uso de SNMPv3 y la correcta configuración del acceso. De esta manera, se puede aprovechar el potencial del protocolo sin comprometer la seguridad de la red.
+
+\newpage
+
+\section*{\textbf{Referencias}}
+\addcontentsline{toc}{section}{Referencias}
+
+Beale, J., Baker, A., Caswell, B., \& Poor, M. (2004).
+\textit{Snort intrusion detection and prevention toolkit}.
+Syngress.
+
+Case, J., Fedor, M., Schoffstall, M., \& Davin, J. (1996).
+\textit{Introduction to community-based SNMPv2}.
+RFC 1901.
+
+Harrington, D., Presuhn, R., \& Wijnen, B. (2002).
+\textit{An architecture for describing SNMP management frameworks}.
+RFC 3411.
+
+Stallings, W. (2017).
+\textit{SNMP, SNMPv1, SNMPv2, SNMPv3, and RMON 1 and 2}.
+Addison-Wesley.
+
+\end{document}
