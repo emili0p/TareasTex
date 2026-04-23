@@ -1,0 +1,224 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+
+\geometry{letterpaper, margin=2.5cm}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Matemáticas para Ciencia de Datos}
+\lhead{Actividad 3.1}
+\rfoot{\thepage}
+
+\title{\textbf{Actividad de Aprendizaje 3.1 \\ Conceptos de Probabilidad}}
+\author{Emilio Izquierdo Montero \\ Grupo 8SA}
+\date{Marzo 2026}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introducción}
+La probabilidad es una herramienta fundamental en la ciencia de datos, ya que permite modelar la incertidumbre y tomar decisiones informadas en base a sucesos anteriores, en este documento se presentan ejercicios resueltos sobre distintos conceptos clave.
+
+\newpage
+
+%------------------------------------------------
+\section{Permutaciones y Combinaciones}
+
+\subsection*{Concepto}
+Las permutaciones consideran el orden de los elementos, mientras que las combinaciones no.
+
+\begin{equation}
+P(n,r)=\frac{n!}{(n-r)!}, \quad C(n,r)=\frac{n!}{r!(n-r)!}
+\end{equation}
+
+\subsection*{Ejercicios}
+
+\textbf{1.} ¿De cuántas formas se pueden ordenar 6 libros distintos en un estante?
+
+\[
+P(6,6)=6!=720
+\]
+
+\textbf{2.} ¿Cuántas palabras distintas se pueden formar con las letras de la palabra ``DATOS''?
+
+\[
+5!=120
+\]
+
+\textbf{3.} Seleccionar 4 estudiantes de un grupo de 12.
+
+\[
+C(12,4)=495
+\]
+
+\textbf{4.} ¿Cuántos comités de 3 personas pueden formarse con 8 candidatos?
+
+\[
+C(8,3)=56
+\]
+
+\textbf{5.} Ordenar 3 posiciones de entre 10 personas.
+
+\[
+P(10,3)=720
+\]
+
+\textbf{Árbol de decisiones o diagrama factorial}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{/home/emilio/Descargas/arboldedecision.jpg}
+\caption{Ejemplo de representación de permutaciones}
+\end{figure}
+
+%------------------------------------------------
+\section{Probabilidad Condicional}
+
+\subsection*{Concepto}
+
+\begin{equation}
+P(A|B)=\frac{P(A \cap B)}{P(B)}
+\end{equation}
+
+\subsection*{Ejercicios}
+
+\textbf{1.} En una baraja, ¿cuál es la probabilidad de sacar una reina dado que la carta es figura?
+
+\[
+P = \frac{4}{12} = \frac{1}{3}
+\]
+
+\textbf{2.} Se sabe que el 70\% de los estudiantes estudian y de ellos el 80\% aprueba.
+
+\[
+P(A|B)=0.8
+\]
+
+\textbf{3.} En un dado, probabilidad de obtener un número par dado que es mayor que 3.
+
+\[
+\frac{2}{3}
+\]
+
+\textbf{4.} Probabilidad de lluvia dado que está nublado (supongamos datos).
+
+\[
+P = 0.6
+\]
+
+\textbf{5.} Probabilidad de enfermedad dado que el paciente tiene síntomas.
+
+\[
+P = \frac{P(\text{síntomas} \cap \text{enfermedad})}{P(\text{síntomas})}
+\]
+
+\textbf{Diagrama de Venn}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{/home/emilio/Descargas/venn.png}
+\caption{Eventos condicionados}
+\end{figure}
+
+%------------------------------------------------
+\section{Eventos Dependientes}
+
+\subsection*{Concepto}
+
+\[
+P(A \cap B)=P(A)P(B|A)
+\]
+
+\subsection*{Ejercicios}
+
+\textbf{1.} Sacar dos cartas rojas sin reemplazo:
+
+\[
+\frac{26}{52} \cdot \frac{25}{51}
+\]
+
+\textbf{2.} Extraer dos bolas rojas de una urna sin reemplazo.
+
+\textbf{3.} Seleccionar dos estudiantes consecutivos.
+
+\textbf{4.} Lanzar dos monedas dependientes.
+
+\textbf{5.} Probabilidad de dos eventos consecutivos.
+
+\textbf{Árbol de probabilidad}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{/home/emilio/Descargas/dependent.png}
+\caption{Eventos dependientes}
+\end{figure}
+
+%------------------------------------------------
+\section{Eventos No Excluyentes}
+
+\subsection*{Concepto}
+
+\begin{equation}
+P(A \cup B)=P(A)+P(B)-P(A \cap B)
+\end{equation}
+
+\subsection*{Ejercicios}
+
+\textbf{1.} Probabilidad de trabajar y estudiar:
+
+\[
+0.5 + 0.4 - 0.2 = 0.7
+\]
+
+\textbf{2.} Probabilidad de números pares o múltiplos de 3.
+
+\textbf{3.} Probabilidad de tomar café o té.
+
+\textbf{4.} Probabilidad de aprobar dos materias.
+
+\textbf{5.} Probabilidad de practicar dos deportes.
+
+\textbf{Diagrama de Venn}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{/home/emilio/Descargas/bdcd.jpg}
+\caption{Eventos no excluyentes}
+\end{figure}
+
+%------------------------------------------------
+\section{Teorema de Bayes}
+
+\subsection*{Concepto}
+
+\begin{equation}
+P(A|B)=\frac{P(B|A)P(A)}{P(B)}
+\end{equation}
+
+\subsection*{Ejercicios}
+
+\textbf{1.} Una prueba médica tiene 95\% de sensibilidad y 90\% de especificidad.
+
+\textbf{2.} Probabilidad de que un producto defectuoso provenga de una máquina.
+
+\textbf{3.} Clasificación de spam.
+
+\textbf{4.} Detección de fraude.
+
+\textbf{5.} Diagnóstico médico.
+
+\textbf{Espacio para figura: Diagrama de árbol Bayesiano}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{/home/emilio/Descargas/diagramavayes.jpg}
+\caption{Aplicación del Teorema de Bayes}
+\end{figure}
+
+%------------------------------------------------
+\section*{Conclusión}
+
+Los conceptos de probabilidad son esenciales para el análisis de datos, ya que permiten modelar incertidumbre y realizar inferencias basadas en información parcial.
+
+\end{document}
