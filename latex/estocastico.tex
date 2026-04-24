@@ -1,0 +1,176 @@
+\documentclass[12pt]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+
+\geometry{letterpaper, margin=2.5cm}
+
+\title{\textbf{Actividad 3.2 \\ Análisis de Procesos Estocásticos \\ Ejemplo 8: Servidores Cloud}}
+\author{Emilio Izquierdo Montero \\ 8SA}
+\date{23 de Abril 2026}
+
+\begin{document}
+
+\maketitle
+
+%------------------------------------------------
+\section{Introducción}
+
+En este trabajo se analiza un proceso estocástico multivariante utilizando datos de dos variables observadas: uso de CPU y uso de memoria. El objetivo es identificar estados ocultos del sistema mediante Modelos de Mezcla Gaussiana (GMM) y analizar su comportamiento.
+
+%------------------------------------------------
+\section{Descripción del Problema}
+
+Las variables analizadas son:
+
+\begin{itemize}
+\item $X(t)$: Uso de CPU (\%)
+\item $Y(t)$: Uso de memoria RAM (\%)
+\end{itemize}
+
+Se busca identificar estados ocultos como:
+
+\begin{itemize}
+\item Bajo uso (Idle)
+\item Uso intensivo de CPU
+\item Uso intensivo de memoria
+\item Sobrecarga
+\end{itemize}
+
+%------------------------------------------------
+\section{Exploración de Datos}
+
+Se realizó un análisis visual inicial mediante un gráfico de dispersión.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{/home/emilio/proyectos/adan1/figura1.png}
+\caption{Distribución de las variables (Variable\_X vs Variable\_Y)}
+\end{figure}
+
+\textbf{Análisis:} Se observan agrupaciones en el espacio de fases, lo que sugiere la existencia de múltiples estados en el sistema.
+
+%------------------------------------------------
+\section{Selección del Número de Estados}
+
+Se utilizó el criterio BIC para determinar el número óptimo de clusters.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{/home/emilio/proyectos/adan1/clusters.png}
+\caption{Selección del número de clusters mediante BIC}
+\end{figure}
+
+\textbf{Resultado:} El número óptimo de estados es $K = X$ (sustituir por resultado real).
+
+%------------------------------------------------
+\section{Modelado con GMM}
+
+El modelo utilizado se define como:
+
+\begin{equation}
+p(x) = \sum_{k=1}^{K} \pi_k \mathcal{N}(x | \mu_k, \Sigma_k)
+\end{equation}
+
+Se entrenó un modelo GMM con $K$ componentes.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{/home/emilio/proyectos/adan1/seleccionk.png}
+\caption{Clusters identificados por el modelo GMM}
+\end{figure}
+
+%------------------------------------------------
+\section{Resultados}
+
+\subsection{Agrupación en el espacio de fases}
+
+Los datos se agrupan en regiones diferenciadas, indicando distintos estados operativos.
+
+\subsection{Parámetros del modelo}
+
+Cada estado se caracteriza por su media y covarianza.
+
+\begin{itemize}
+\item Las medias $\mu$ representan el centro de cada cluster
+\item Las covarianzas $\Sigma$ describen la dispersión
+\item Los pesos $\pi$ indican la proporción de datos en cada estado
+\end{itemize}
+
+\textbf{(Opcional)} Puedes incluir aquí una tabla con resultados:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ccc}
+\toprule
+Estado & $\mu_X$ & $\mu_Y$ \\
+\midrule
+0 & ... & ... \\
+1 & ... & ... \\
+2 & ... & ... \\
+3 & ... & ... \\
+\bottomrule
+\end{tabular}
+\caption{Medias de los clusters}
+\end{table}
+
+%------------------------------------------------
+\section{Modelo HMM (Opcional)}
+
+Para considerar la dinámica temporal, se utilizó un modelo oculto de Markov.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{/home/emilio/proyectos/adan1/estadis.png}
+\caption{Estados ocultos en el tiempo}
+\end{figure}
+
+\subsection{Matriz de transición}
+
+\[
+A =
+\begin{bmatrix}
+P_{11} & P_{12} & \cdots \\
+P_{21} & P_{22} & \cdots \\
+\vdots & \vdots & \ddots
+\end{bmatrix}
+\]
+
+\textbf{Interpretación:} Esta matriz describe la probabilidad de transición entre estados.
+
+%------------------------------------------------
+\section{Análisis e Interpretación}
+
+\subsection{Agrupación}
+Las observaciones se agrupan en regiones que corresponden a diferentes comportamientos del sistema.
+
+\subsection{Características de los estados}
+Cada estado presenta valores característicos de CPU y memoria, lo que permite interpretarlos como distintos modos de operación.
+
+\subsection{Alineación con estados reales}
+Los clusters identificados presentan similitudes con los estados teóricos, aunque existe cierto solapamiento entre ellos.
+
+\subsection{Aplicaciones}
+Estas técnicas permiten:
+
+\begin{itemize}
+\item Detectar sobrecarga del sistema
+\item Optimizar recursos
+\item Implementar autoescalado
+\item Identificar anomalías
+\end{itemize}
+
+\subsection{Probabilidades de transición}
+El modelo HMM permite calcular la probabilidad de cambio entre estados, útil para predicción y toma de decisiones.
+
+%------------------------------------------------
+\section{Conclusión}
+
+Los modelos de mezcla gaussiana permiten identificar estados ocultos en sistemas complejos a partir de datos observados. La incorporación de modelos HMM permite además analizar la evolución temporal, mejorando la comprensión del sistema.
+
+\end{document}
