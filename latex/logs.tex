@@ -1,0 +1,210 @@
+\documentclass[12pt]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{titlesec}
+
+\geometry{a4paper, margin=2.5cm}
+\setstretch{1.5}
+
+\titleformat{\section}{\bfseries\large}{\thesection}{1em}{}
+
+\begin{document}
+
+%---------------- PORTADA ----------------%
+\begin{titlepage}
+\centering
+
+{\large \textbf{Tecnológico Nacional de México}}\\
+
+\vfill
+
+{\Large \textbf{Informe Documental:}}\\[0.5cm]
+{\Large \textbf{Análisis del Protocolo "SSH y HTTP"}}\\[1cm]
+
+{\large Ingeniería en Sistemas Computacionales}\\[1cm]
+
+\textbf{Presenta:}\\
+Emilio Izquierdo Montero \\
+22660231 \\[1cm]
+
+\textbf{Docente:}\\
+Pedro Pablo Martínez Carmona \\[1cm]
+
+30 de Abril de 2026
+
+\vfill
+\end{titlepage}
+
+% indice
+\tableofcontents
+\newpage
+
+% introduccion 
+\section{Introducción}
+
+En el presente documento se realiza el análisis de los protocolos SSH y HTTP mediante la utilización de herramientas de monitoreo y análisis de red. Se emplea un entorno basado en GNU/Linux, especificamente Arch la cual cuenta con systemd, donde se tienen corriendo y configurados los servicios de OpenSSH y Nginx.
+
+El objetivo es observar tanto los registros del sistema como el comportamiento del tráfico de red entre un cliente y un servidor, permitiendo comprender el funcionamiento interno de dichos protocolos.
+
+\newpage
+
+%
+\section{Conceptos}
+
+\textbf{SSH}  
+Es un protocolo de red que permite la conexión segura entre dos dispositivos, proporcionando autenticación y cifrado.
+
+\textbf{HTTP}  
+Es un protocolo de comunicación utilizado para la transferencia de información en la web.
+
+
+\textbf{OpenSSH:}  
+Es el cliente de SSH mas seguro y mas popular en distriduciones GNU/Linux, siendo un estandar viniendo instalado en la mayoria de distriduciones por defecto.
+
+\textbf{Nginx:}  
+Servidor web de alto rendimiento utilizado para servir contenido HTTP, lo use antes que apache por comodidad en el archivo de configuracion.
+
+\textbf{Analizador de Protocolos:}  
+Herramienta que permite capturar y analizar paquetes de red, como Wireshark o tcpdump.
+
+\newpage
+
+% analisis 
+\section{Detalle de Análisis}
+
+\subsection{Configuración del entorno}
+
+El sistema utilizado fue una distribución GNU/Linux con systemd, por lo que verificó el estado de los servicios con:
+
+\begin{verbatim}
+systemctl status ssh
+systemctl status nginx
+\end{verbatim}
+
+\subsection{Registros (Logs) de SSH}
+
+Los registros del servicio SSH se encuentran en:
+
+\begin{verbatim}
+journalctl -u sshd 
+\end{verbatim}
+
+Si se desea ver en tiempo real con agregar la flag -f es posible
+
+\begin{verbatim}
+journalctl -u sshd -f
+\end{verbatim}
+
+Ejemplo de registro usando journalctl -u sshd -f:
+
+\begin{verbatim}
+May 04 00:19:59 thinkpad sshd-session[102870]: Accepted publickey for emilio from ::1 port 51662 ssh2: ED25519 SHA256:JC/tiD5Dte6qrnHk/VS00nlqG7ZKzVQvwaHKYkgoqdE
+\end{verbatim}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/Descargas/ssh_log.png}
+\caption{Ejemplo de registro de autenticación SSH en el sistema}
+\end{figure}
+
+\subsection{Registros (Logs) de HTTP con Nginx}
+
+Los logs de Nginx se encuentran en:
+
+\begin{verbatim}
+/var/log/nginx/access.log
+\end{verbatim}
+
+Ejemplo:
+
+\begin{verbatim}
+127.0.0.1 - - [04/May/2026:00:22:54 -0600] "GET / HTTP/1.1" 200 896 "-" "curl/8.20.0"
+\end{verbatim}
+
+Esto indica una petición HTTP exitosa desde el cliente.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/Descargas/nginx_log.png}
+\caption{Ejemplo de registro de nginx en el sistema}
+\end{figure}
+
+\subsection{Análisis con Wireshark}
+
+Se utilizó Wireshark para capturar tráfico de red.
+
+\textbf{SSH:}
+\begin{itemize}
+\item Se observa el handshake inicial.
+\item El contenido está cifrado.
+\item Uso del puerto 22.
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/Descargas/wireshark_ssh.png}
+\caption{Ejemplo de registro de ssh en Wireshark, si esta corriendo en la interfaz de loopback por que realmente nadie se esta conectando, por motivos de la prueba solo lo hago yo desde mi maquina a mi maquina a traves de la interfaz de loopback}
+\end{figure}
+
+\textbf{HTTP:}
+\begin{itemize}
+\item Se observan peticiones GET.
+\item El contenido viaja en texto plano.
+\item Uso del puerto 80.
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/Descargas/wireshark_nginx.png}
+\caption{Ejemplo de registro de nginx en Wireshark, como podemos observar al no estar cifrado por algo como HTTPS, podemos observar todo lo que devuelve la pagina, en texto plano!, y si alguien estuviera sniffeando nuestros paquetes enviados fuera de mi interfaz de loopback veria cosas sensibles muy facilmente}
+\end{figure}
+
+
+\subsection{Interacción Cliente-Servidor}
+
+\textbf{SSH:}
+\begin{enumerate}
+\item Cliente inicia conexión
+\item Intercambio de claves
+\item Autenticación
+\item Sesión segura
+\end{enumerate}
+
+\textbf{HTTP:}
+\begin{enumerate}
+\item Cliente envía petición GET
+\item Servidor responde con código 200 (de que la peticion salio bien)
+\item Se entrega contenido
+\end{enumerate}
+
+\newpage
+
+%
+\section{Conclusiones y Recomendaciones}
+
+Se concluye que SSH proporciona un canal seguro mediante cifrado, mientras que HTTP transmite información sin protección por lo que debemos seriamente considerar encriptarlo.
+
+El análisis de logs permite identificar accesos y errores, mientras que el analizador de protocolos permite observar el comportamiento en tiempo real que puede ayudarnos a hacer diagnosticos de manera rapida y actuar como administradores de ser requerido.
+
+Se recomienda el uso de HTTPS en lugar de HTTP para mejorar la seguridad en entornos reales.
+
+\newpage
+
+% referencias
+\section{Fuentes o Referencias}
+
+\begin{itemize}
+\item https://www.openssh.org/manual.html
+\item https://linux.die.net/man/1/ssh
+\item https://linux.die.net/man/8/nginx
+\item https://nginx.org/en/docs/
+\item https://www.wireshark.org/docs/man-pages/wireshark.html 
+\item https://www.wireshark.org/docs/
+\end{itemize}
+
+\end{document}
