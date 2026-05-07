@@ -1,0 +1,157 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+\geometry{margin=1in}
+\onehalfspacing
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+
+    % Logo opcional
+    %\includegraphics[width=0.3\textwidth]{logo.png}\par\vspace{1cm}
+
+    {\scshape\Large Redes \par}
+    \vspace{1.5cm}
+
+    {\huge\bfseries Cuestionario QoS \par}
+    \vspace{0.5cm}
+
+    \vfill
+
+    {\large
+    Nombre del Alumno: Emilio Izquierdo Montero {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Profesor: Pedro Pablo Martinez Carmona {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Grupo / Semestre: 8 {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Fecha: 6 de mayo de 2026 {\hspace{6cm}}
+    \par}
+
+    \vfill
+
+\end{titlepage}
+
+\section*{INTRODUCCIÓN A QoS - CALIDAD DE SERVICIO}
+
+La Calidad de Servicio (QoS, por sus siglas en inglés \textit{Quality of Service}) es un conjunto de tecnologías y mecanismos utilizados en redes de computadoras para administrar y priorizar el tráfico de datos. Su objetivo principal es garantizar que ciertos servicios o aplicaciones reciban un mejor rendimiento dentro de la red, especialmente en situaciones donde existe congestión o limitaciones de ancho de banda.
+
+QoS es ampliamente utilizado en redes empresariales, servidores, sistemas de telecomunicaciones y administración de infraestructura de TI. Gracias a esta tecnología es posible priorizar aplicaciones críticas como videollamadas, VoIP, transmisión de video, servicios en tiempo real y aplicaciones sensibles a la latencia.
+
+Entre los parámetros más importantes que QoS controla se encuentran:
+
+\begin{itemize}
+    \item \textbf{Ancho de banda:} cantidad de datos que pueden transmitirse por la red.
+    \item \textbf{Latencia:} tiempo que tarda un paquete en llegar a su destino.
+    \item \textbf{Jitter:} variación en el tiempo de llegada de los paquetes.
+    \item \textbf{Pérdida de paquetes:} paquetes que no llegan correctamente al destino.
+\end{itemize}
+
+En administración de sistemas y redes, QoS permite optimizar recursos y mantener estabilidad en los servicios críticos. Por ejemplo, en una empresa se puede configurar QoS para que el tráfico de videoconferencias tenga mayor prioridad que las descargas de archivos o navegación web.
+
+También es común encontrar QoS en routers, switches administrables y sistemas operativos modernos, donde se aplican reglas para clasificar y controlar el tráfico de red según políticas definidas por el administrador.
+
+\section*{Preguntas}
+
+\subsection*{1. Pregunta abierta}
+\textbf{¿Qué significa QoS?}
+
+Respuesta: Quality of Service o Calidad de Servicio.
+
+\vspace{0.5cm}
+
+\subsection*{2. Falso o Verdadero}
+\textbf{QoS ayuda a priorizar tráfico importante dentro de una red.}
+
+Respuesta: Verdadero.
+
+\vspace{0.5cm}
+
+\subsection*{3. Opción múltiple}
+\textbf{¿Cuál de los siguientes servicios requiere QoS?}
+
+\begin{enumerate}[label=\alph*)]
+    \item Calculadora
+    \item Videollamada
+    \item Bloc de notas
+    \item Explorador de archivos
+\end{enumerate}
+
+Respuesta: b) Videollamada.
+
+\vspace{0.5cm}
+
+\subsection*{4. Relaciona columnas}
+
+\begin{tabular}{|l|l|}
+\hline
+Latencia & Tiempo de llegada \\ \hline
+Jitter & Variación de retraso \\ \hline
+Ancho de banda & Capacidad de transmisión \\ \hline
+\end{tabular}
+
+\vspace{0.5cm}
+
+\subsection*{5. Completa la oración}
+\textbf{QoS se utiliza para mejorar el rendimiento de la \_\_\_\_\_\_.}
+
+Respuesta: red.
+
+\vspace{0.5cm}
+
+\subsection*{6. Pregunta abierta}
+\textbf{¿Qué dispositivo de red puede implementar QoS?}
+
+Respuesta: Routers y switches administrables.
+
+\vspace{0.5cm}
+
+\subsection*{7. Falso o Verdadero}
+\textbf{QoS únicamente funciona en redes inalámbricas.}
+
+Respuesta: Falso.
+
+\vspace{0.5cm}
+
+\subsection*{8. Opción múltiple}
+\textbf{¿Qué parámetro mide la pérdida de paquetes?}
+
+\begin{enumerate}[label=\alph*)]
+    \item Packet Loss
+    \item CPU Usage
+    \item RAM
+    \item DNS
+\end{enumerate}
+
+Respuesta: a) Packet Loss.
+
+\vspace{0.5cm}
+
+\subsection*{9. Subrayar}
+\textbf{Subraya el servicio más importante para QoS:}
+
+\begin{itemize}
+    \item Juegos sin conexión
+    \item Voz sobre IP (VoIP)
+    \item Editor de texto
+\end{itemize}
+
+Respuesta: Voz sobre IP (VoIP).
+
+\vspace{0.5cm}
+
+\subsection*{10. Pregunta abierta}
+\textbf{¿Por qué es importante QoS en redes empresariales?}
+
+Respuesta: Porque permite garantizar estabilidad y prioridad a servicios críticos.
+
+\end{document}
