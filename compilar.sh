@@ -16,18 +16,30 @@ if [ ! -f "$INPUT_FILE" ]; then
   exit 1
 fi
 
-echo "compilando $INPUT_FILE..."
-
-tectonic "$INPUT_FILE"
-
 BASENAME=$(basename "$INPUT_FILE" .tex)
 DIRNAME=$(dirname "$INPUT_FILE")
+
+echo "Compilando $INPUT_FILE..."
+
+tectonic "$INPUT_FILE"
 
 PDF_PATH="$DIRNAME/$BASENAME.pdf"
 
 if [ -f "$PDF_PATH" ]; then
-  mv "$PDF_PATH" "$DEST_DIR/"
-  echo "PDF guardado en $DEST_DIR/$BASENAME.pdf"
+
+  # pedir nombre del PDF
+  read -p "Nombre del PDF (vacío = usar '$BASENAME'): " PDF_NAME
+
+  # si esta vacio usar basename
+  if [ -z "$PDF_NAME" ]; then
+    PDF_NAME="$BASENAME"
+  fi
+
+  mv "$PDF_PATH" "$DEST_DIR/$PDF_NAME.pdf"
+
+  echo "PDF guardado en:"
+  echo "$DEST_DIR/$PDF_NAME.pdf"
+
 else
-  echo "Error: No se genero el PDF."
+  echo "Error: No se generó el PDF."
 fi
