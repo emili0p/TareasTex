@@ -1,0 +1,203 @@
+\documentclass[12pt]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+\onehalfspacing
+
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+
+\lstset{
+    backgroundcolor=\color{codegray},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    language=Scala
+}
+
+\begin{document}
+
+% portads
+
+\begin{titlepage}
+    \centering
+
+    % Logo opcional
+    %\includegraphics[width=0.3\textwidth]{logo.png}\par\vspace{1cm}
+
+    {\scshape\Large Programación Funcional \par}
+    \vspace{1.5cm}
+
+    {\huge\bfseries Evidencia del Trabajo \par}
+    \vspace{0.5cm}
+
+    {\Large Proyecto Nones: Simulación Bioclimática \par}
+
+    \vfill
+
+    {\large
+    Nombre del Alumno: Emilio Izquierdo Montero \\
+    \vspace{0.3cm}
+
+    Profesor: Octavo Guzman Peñaloza \\
+    \vspace{0.3cm}
+
+    Grupo / Semestre: 8 \\
+    \vspace{0.3cm}
+
+    Fecha: 10 de mayo del 2026
+    \par}
+
+    \vfill
+
+\end{titlepage}
+
+
+\section{Introducción}
+
+El presente proyecto implementa una simulación bioclimática utilizando el lenguaje Scala y principios de programación funcional, el sistema genera datos simulados provenientes de sensores ambientales y clasifica el estado de un ecosistema mediante un arbol de decisión funcional.
+
+El desarrollo del proyecto hace uso de estructuras inmutables, evaluación perezosa mediante \texttt{LazyList} y procesamiento funcional utilizando transformaciones como \texttt{map} y recursividad.
+
+
+\section{Objetivo}
+
+Desarrollar un sistema funcional capaz de:
+
+\begin{itemize}
+    \item Simular datos de sensores ambientales.
+    \item Procesar información usando programación funcional.
+    \item Implementar un árbol de decisión para clasificar estados.
+    \item Utilizar Lazy Evaluation con \texttt{LazyList}.
+\end{itemize}
+
+
+\section{Modelado de Datos}
+
+Se utilizaron ADTs (Algebraic Data Types) para representar tanto los datos de sensores como los estados del ecosistema.
+
+\begin{lstlisting}
+case class SensorData(
+    id: Int,
+    temp: Double,
+    humedad: Double,
+    co2: Int
+)
+
+sealed trait EstadoSalud
+
+case object Estable extends EstadoSalud
+case object Alerta extends EstadoSalud
+case object Critico extends EstadoSalud
+\end{lstlisting}
+
+
+\section{Árbol de Decisión}
+
+El sistema clasifica el estado del ecosistema mediante un árbol de decisión funcional.
+
+Las reglas implementadas fueron:
+
+\begin{itemize}
+    \item CO2 mayor a 800 ppm = Crítico
+    \item Temperatura mayor a 32°C = Alerta
+    \item Humedad menor a 25\% = Alerta
+    \item Cualquier otro caso = Estable
+\end{itemize}
+
+\begin{lstlisting}
+sealed trait DecisionTree
+
+case class DecisionNode(
+    condicion: SensorData => Boolean,
+    izquierda: DecisionTree,
+    derecha: DecisionTree
+) extends DecisionTree
+
+case class Hoja(resultado: EstadoSalud)
+extends DecisionTree
+\end{lstlisting}
+
+
+\section{Uso de LazyList}
+
+Se utilizó \texttt{LazyList} para generar un flujo infinito de sensores simulados.
+
+Esto permite que los datos sean calculados únicamente cuando son necesarios, aplicando una evaluación bastanteeee lazy.
+
+\begin{lstlisting}
+def streamSensores: LazyList[SensorData]
+\end{lstlisting}
+
+
+\section{Evidencias de Ejecución}
+
+\subsection{Compilación y ejecución del proyecto}
+
+A continuacion se mostraran capturas de:
+
+\begin{itemize}
+    \item La terminal con sbt instalado.
+    \item El comando \texttt{sbt run}
+    \item La compilación correcta
+\end{itemize}
+
+\vspace{0.5cm}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{/home/emilio/Descargas/scalafinal/creacionsbt.png}
+\end{figure}
+
+\vspace{0.5cm}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{/home/emilio/Descargas/scalafinal/sbtrun.png}
+\end{figure}
+
+
+\subsection{Salida del programa}
+
+Las imagenes que siguen es donde se observa:
+
+\begin{itemize}
+    \item Los sensores generados
+    \item Temperatura
+    \item Humedad
+    \item CO2
+    \item Estado clasificado
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{/home/emilio/Descargas/scalafinal/estados.png}
+\end{figure}
+
+\section*{Código Final}
+
+El código final desarrollado en nvim usando sbt, metals se encuentra disponible en el repositorio de GitHub:
+
+\begin{itemize}
+    \item Repositorio: \href{https://github.com/emili0p/funcprog/tree/master/proyectonones}{https://github.com/emili0p/funcprog/tree/master/proyectonones}
+\end{itemize}
+
+\noindent
+Se incluyen archivos \texttt{.scala} correspondientes al proyecto, que pueden descargarse y ejecutarse directamente en donde sea usando sbt run para reproducir los resultados mostrados en las capturas de pantalla.
+
+\section{Conclusión}
+
+Scala permite implementar sistemas funcionales de forma clara y modular. El uso de ADTs, recursividad y \texttt{LazyList} facilitó la creación de un sistema eficiente para simular datos ambientales y clasificarlos mediante un árbol de decisión funcional.
+
+
+\end{document}
