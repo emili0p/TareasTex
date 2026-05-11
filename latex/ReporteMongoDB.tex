@@ -1,0 +1,408 @@
+\documentclass[12pt]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+\onehalfspacing
+
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+
+\lstset{
+    backgroundcolor=\color{codegray},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    language=Python
+}
+
+\begin{document}
+
+% portada
+
+\begin{titlepage}
+    \centering
+
+    %\includegraphics[width=0.3\textwidth]{logo.png}\par\vspace{1cm}
+
+    {\scshape\Large Bases de Datos NoSQL \par}
+    \vspace{1.5cm}
+
+    {\huge\bfseries Evidencia de la Práctica CRUD \par}
+    \vspace{0.5cm}
+
+    {\Large Aplicación Web con Flask y MongoDB Atlas \par}
+
+    \vfill
+
+    {\large
+    Nombre del Alumno: Emilio Izquierdo Montero \\
+    No Control: 22660231 \\
+    Nombre del Alumno: Acosta Cardenas Eduardo Santiago \\
+    No Control: 22660221 \\
+    \vspace{0.3cm}
+
+    Profesor: Carlos Alberto Garcia Sanchez \\
+    \vspace{0.3cm}
+
+    Grupo / Semestre: 8 \\
+    \vspace{0.3cm}
+
+    Fecha: 8 de mayo del 2026
+    \par}
+
+    \vfill
+
+\end{titlepage}
+
+\section{Introducción}
+
+La presente práctica consistió en el desarrollo de una aplicación web funcional utilizando Python, Flask y MongoDB Atlas como base de datos NoSQL en la nube.
+
+La aplicación implementa las operaciones CRUD (Create, Read, Update y Delete) sobre una colección de restaurantes obtenida desde un dataset real en formato JSON. El sistema permite visualizar restaurantes, realizar búsquedas, registrar nuevos establecimientos, actualizar información y eliminar registros desde una interfaz web.
+
+El proyecto también implementa conexión remota a MongoDB Atlas utilizando PyMongo y variables de entorno para proteger la URI de conexión.
+
+
+\section{Objetivo}
+
+Desarrollar una aplicación web conectada a MongoDB Atlas capaz de:
+
+\begin{itemize}
+    \item Visualizar restaurantes almacenados en MongoDB.
+    \item Filtrar restaurantes por distrito o tipo de cocina.
+    \item Registrar nuevos restaurantes.
+    \item Editar restaurantes existentes.
+    \item Eliminar registros mediante confirmación.
+\end{itemize}
+
+
+\section{Tecnologías Utilizadas}
+
+Las tecnologías y herramientas utilizadas fueron:
+
+\begin{itemize}
+    \item Python 3
+    \item Flask
+    \item PyMongo
+    \item MongoDB Atlas
+    \item HTML
+    \item CSS
+    \item dotenv
+\end{itemize}
+
+
+\section{Librerías Utilizadas}
+
+La aplicación utiliza las siguientes librerías principales:
+
+\begin{lstlisting}
+from flask import Flask, render_template,
+request, redirect, url_for, jsonify, flash
+
+from pymongo import MongoClient
+
+from bson import ObjectId
+
+from dotenv import load_dotenv
+\end{lstlisting}
+
+\begin{itemize}
+    \item Flask: Framework web utilizado para la interfaz y rutas.
+    \item PyMongo: Librería para conectarse y manipular MongoDB.
+    \item bson: Permite trabajar con ObjectId.
+    \item dotenv: Carga variables de entorno desde un archivo .env.
+\end{itemize}
+
+
+\section{Conexión con MongoDB Atlas}
+
+La conexión hacia MongoDB Atlas se realizó utilizando una URI almacenada dentro de variables de entorno.
+
+\begin{lstlisting}
+load_dotenv()
+
+MONGO_URI = os.getenv("MONGO_URI")
+
+client = MongoClient(MONGO_URI)
+
+db = client["restaurantDB"]
+
+collection = db["restaurants"]
+\end{lstlisting}
+
+El uso de variables de entorno permite proteger credenciales y mantener una configuración más segura.
+
+
+\section{Carga del Dataset}
+
+Se desarrolló un script independiente llamado \texttt{import\_data.py} encargado de importar el dataset de restaurantes hacia MongoDB Atlas.
+
+El script:
+
+\begin{itemize}
+    \item Lee el archivo JSON.
+    \item Convierte cada línea en documentos JSON.
+    \item Inserta los datos en lotes.
+    \item Permite limpiar la colección antes de importar nuevamente.
+\end{itemize}
+
+\begin{lstlisting}
+records = load_jsonl(filepath)
+
+client = MongoClient(MONGO_URI)
+
+db = client[DB_NAME]
+
+col = db[COL_NAME]
+
+col.insert_many(batch)
+\end{lstlisting}
+
+
+\section{Estructura del Dataset}
+
+Cada documento del dataset contiene información relacionada con restaurantes.
+
+Ejemplo de documento:
+
+\begin{lstlisting}
+{
+    "name": "Pizza Town",
+    "borough": "Brooklyn",
+    "cuisine": "Pizza",
+    "address": {
+        "building": "100",
+        "street": "Main Street",
+        "zipcode": "11201"
+    }
+}
+\end{lstlisting}
+
+
+\section{Operaciones CRUD Implementadas}
+
+\subsection{READ — Visualización y Búsqueda}
+
+La aplicación permite listar restaurantes mostrando:
+
+\begin{itemize}
+    \item Nombre
+    \item Distrito
+    \item Tipo de cocina
+\end{itemize}
+
+Además, se implementaron filtros de búsqueda utilizando parámetros GET.
+
+\begin{lstlisting}
+borough = request.args.get("borough", "")
+cuisine = request.args.get("cuisine", "")
+
+query = {}
+
+if borough:
+    query["borough"] = borough
+
+if cuisine:
+    query["cuisine"] = cuisine
+
+restaurants = [
+    serialize(r)
+    for r in collection.find(query).limit(100)
+]
+\end{lstlisting}
+
+
+\subsection{CREATE — Registro de Restaurantes}
+
+La aplicación incluye un formulario para registrar nuevos restaurantes.
+
+Campos utilizados:
+
+\begin{itemize}
+    \item Nombre
+    \item Distrito
+    \item Tipo de cocina
+    \item Código Postal
+    \item Calle
+    \item Número
+\end{itemize}
+
+\begin{lstlisting}
+doc = {
+    "name": name,
+    "borough": borough,
+    "cuisine": cuisine,
+    "address": {
+        "building": building,
+        "street": street,
+        "zipcode": zipcode,
+        "coord": [],
+    },
+    "grades": [],
+}
+
+collection.insert_one(doc)
+\end{lstlisting}
+
+
+\subsection{UPDATE — Actualización de Datos}
+
+La aplicación permite modificar restaurantes mediante su identificador.
+
+Campos actualizables:
+
+\begin{itemize}
+    \item Nombre
+    \item Tipo de cocina
+    \item Distrito
+    \item Código Postal
+\end{itemize}
+
+\begin{lstlisting}
+collection.update_one(
+    {"_id": oid},
+    {
+        "set": update_fields
+    }
+)
+\end{lstlisting}
+
+
+\subsection{DELETE — Eliminación de Restaurantes}
+
+Se implementó una función para eliminar restaurantes mediante confirmación.
+
+\begin{lstlisting}
+result = collection.delete_one({
+    "_id": oid
+})
+\end{lstlisting}
+
+
+\section{API JSON}
+
+La aplicación también incluye una pequeña API REST para devolver restaurantes en formato JSON.
+
+\begin{lstlisting}
+@app.route("/api/restaurants")
+def api_list():
+
+    docs = [
+        serialize(d)
+        for d in collection.find(query).limit(50)
+    ]
+
+    return jsonify(docs)
+\end{lstlisting}
+
+Esta API fue utilizada principalmente para pruebas y depuración.
+
+
+\section{Evidencias de Ejecución}
+
+\subsection{Frontend de la aplicación}
+
+Captura donde se observa el Frontend de la aplicación
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{/home/emilio/Descargas/frontendrestaurante.png}
+\end{figure}
+
+
+\subsection{Agregar un restaurante}
+Restaurante siendo insertado con el endpoint en la base de datos 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{/home/emilio/Descargas/insertar.png}
+\end{figure}
+
+
+\subsection{Buscado del restaurante insertado}
+
+Visualización y búsqueda de restaurantes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{/home/emilio/Descargas/busqueda.png}
+\end{figure}
+
+
+
+\subsection{Edición de Restaurante}
+
+Actualización de datos desde la interfaz web.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{/home/emilio/Descargas/editar.png}
+\end{figure}
+
+
+\subsection{Eliminación de Restaurante}
+
+Eliminación de registros mediante confirmación.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{/home/emilio/Descargas/borrar1.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{/home/emilio/Descargas/borrar2.png}
+\end{figure}
+
+
+\section{Archivo Requirements}
+
+El proyecto utiliza las siguientes dependencias:
+
+\begin{lstlisting}
+flask
+pymongo
+python-dotenv
+dnspython
+\end{lstlisting}
+
+
+\section*{Código Fuente}
+
+El código fuente del proyecto se encuentra disponible en GitHub:
+
+\begin{itemize}
+    \item Repositorio:
+    \href{https://github.com/emili0p/CocinasManhattan}
+    {https://github.com/emili0p/CocinasManhattan}
+\end{itemize}
+
+\noindent
+El repositorio incluye:
+
+\begin{itemize}
+    \item Código fuente completo
+    \item Templates HTML
+    \item Archivo requirements.txt
+    \item Script import\_data.py
+\end{itemize}
+
+
+\section{Conclusión}
+
+La práctica permitió comprender el funcionamiento de bases de datos NoSQL utilizando MongoDB Atlas y su integración con aplicaciones web desarrolladas con Flask.
+
+El uso de PyMongo facilitó las operaciones CRUD sobre documentos JSON, mientras que Flask permitió construir una interfaz sencilla y funcional para administrar la información de restaurantes.
+
+Además, el uso de variables de entorno mediante dotenv ayudó a mejorar la seguridad de la conexión hacia MongoDB Atlas.
+
+\end{document}
