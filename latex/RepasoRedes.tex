@@ -1,0 +1,297 @@
+\documentclass[12pt]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{titlesec}
+
+\geometry{margin=1in}
+\onehalfspacing
+
+\title{Monitoreo y Diagnóstico de Redes}
+\author{}
+\date{}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+
+    % Logo opcional
+    %\includegraphics[width=0.3\textwidth]{logo.png}\par\vspace{1cm}
+
+    {\scshape\Large Monitoreo y Diagnóstico de Redes \par}
+    \vspace{1.5cm}
+
+    {\huge\bfseries Evidencia del trabajo \par}
+    \vspace{0.5cm}
+    {\Large Tarea 2 \par}
+
+    \vfill
+
+    {\large
+    Nombre del Alumno: Emilio Izquierdo Montero {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Profesor: Pedro Pablo Martinez Carmona {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Grupo / Semestre: 8 {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Fecha: 17 de abril del 2026 {\hspace{6cm}}
+    \par}
+
+    \vfill
+
+\end{titlepage}
+\section*{1. ¿Para qué pueden emplearse las herramientas de diagnóstico?}
+
+Las herramientas de diagnóstico sirven para supervisar, analizar y detectar problemas en una red o sistema. Permiten medir el rendimiento, identificar fallos, monitorear procesos y verificar el estado de los dispositivos.
+
+Algunas herramientas comunes son:
+
+\begin{itemize}
+    \item \textbf{htop}: monitoriza procesos y uso de CPU, memoria y carga del sistema.
+    \item \textbf{top}: muestra procesos activos y consumo de recursos.
+    \item \textbf{ping}: verifica conectividad y latencia.
+    \item \textbf{traceroute}: muestra la ruta seguida por los paquetes.
+    \item \textbf{nmap}: escaneo de puertos y análisis de hosts.
+    \item \textbf{Wireshark}: captura y análisis de paquetes.
+\end{itemize}
+
+\section*{2. Ventaja de NetFlow}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item b. ayuda a los análisis de seguridad
+\end{itemize}
+
+\section*{3. Verdadero o falso}
+
+\subsection*{a)}
+La monitorización activa implica el envío de traps por parte de agentes.
+
+\textbf{Falso}
+
+Los traps pertenecen a la monitorización pasiva mediante SNMP.
+
+\subsection*{b)}
+Nmap es una herramienta para monitorizar el rendimiento.
+
+\textbf{Falso}
+
+Nmap se utiliza principalmente para escaneo de puertos y descubrimiento de hosts.
+
+\section*{4. ¿Cuáles son las tres fases de trabajo de Cacti?}
+
+\begin{enumerate}
+    \item Recolección de datos.
+    \item Almacenamiento de información.
+    \item Generación de gráficas.
+\end{enumerate}
+
+\section*{5. ¿Para que NetFlow funcione es necesario tenerlo habilitado en todos los routers de la red?}
+
+\textbf{Falso}
+
+No es obligatorio habilitar NetFlow en todos los routers. Puede activarse únicamente en los dispositivos clave donde se desea analizar el tráfico de red.
+
+\section*{6. ¿Qué hace la herramienta traceroute?}
+
+Traceroute permite identificar la ruta que siguen los paquetes desde un origen hasta un destino, mostrando los saltos intermedios y el tiempo de respuesta de cada uno.
+
+\section*{7. Con MRTG se puede hacer...}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item c. un gráfico que muestre el tráfico de los dispositivos administrados
+\end{itemize}
+
+\section*{8. Explique qué tipo de pruebas se hacen para controlar la monitorización}
+
+Se realizan pruebas de conectividad, latencia, pérdida de paquetes, consumo de ancho de banda, uso de CPU, memoria y disponibilidad de servicios.
+
+\section*{9. ¿Para usar Nagios es necesario un servidor web?}
+
+\textbf{Sí}
+
+Nagios utiliza una interfaz web para visualizar alertas, estados y reportes, por lo que normalmente requiere un servidor web como Apache.
+
+\section*{10. Indique dos elementos que conforman Cricket}
+
+\begin{itemize}
+    \item RRDTool
+    \item SNMP
+\end{itemize}
+
+\section*{11. Indique un cliente de Nagios}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item d. Nsclient++
+\end{itemize}
+
+\section*{12. Para elaborar un gráfico con Cacti...}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item c. se puede escoger el OID de la MIB
+\end{itemize}
+
+\section*{13. Relacione cada elemento}
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Zenmap & Testeo de puertos \\
+\hline
+Nagios & Nrpe \\
+\hline
+Netflow & Cisco \\
+\hline
+J-Flow & Juniper \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{14. Protocolo de administración de red}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item d. RMON
+\end{itemize}
+
+\section*{15. ¿Qué conceptos deben considerarse en la planificación del análisis de rendimiento?}
+
+\begin{itemize}
+    \item Latencia
+    \item Jitter
+    \item Pérdida de paquetes
+    \item Uso de ancho de banda
+    \item Disponibilidad
+\end{itemize}
+
+\section*{16. Para valorar la utilización del canal se puede emplear...}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item c. el 95-percentil
+\end{itemize}
+
+\section*{17. Verdadero o falso}
+
+\subsection*{a)}
+Intentar mitigar el Jitter puede aumentar la latencia.
+
+\textbf{Verdadero}
+
+\subsection*{b)}
+Entre los destinatarios de la información de los análisis pueden estar los clientes de la empresa.
+
+\textbf{Verdadero}
+
+\section*{18. ¿El clustering mejora el rendimiento de los servidores?}
+
+\textbf{Verdadero}
+
+El clustering distribuye la carga entre varios servidores y mejora disponibilidad y rendimiento.
+
+\section*{19. Diferencia entre indicador y métrica}
+
+\begin{itemize}
+    \item \textbf{Indicador}: representa el estado general de un sistema.
+    \item \textbf{Métrica}: valor numérico específico medido.
+\end{itemize}
+
+\section*{20. ¿Qué soluciones existen para garantizar disponibilidad?}
+
+\begin{itemize}
+    \item Redundancia
+    \item Clustering
+    \item Balanceo de carga
+    \item Sistemas UPS
+    \item Respaldos
+\end{itemize}
+
+\section*{21. Elemento usado para calcular el retardo de transmisión}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item c. el tamaño del paquete
+\end{itemize}
+
+\section*{22. ¿Qué se puede utilizar para medir el retardo?}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item d. Todas las respuestas anteriores son correctas
+\end{itemize}
+
+\section*{23. ¿Qué se hace para evitar la variación del retardo?}
+
+Se implementan mecanismos de Calidad de Servicio (QoS), priorización de tráfico y control de congestión.
+
+\section*{24. ¿Los discos duros son los dispositivos más importantes de monitorizar?}
+
+\textbf{Sí}
+
+Porque almacenan información crítica y su fallo puede afectar el funcionamiento completo del sistema.
+
+\section*{25. Indique tres elementos que limitan la capacidad efectiva de un canal}
+
+\begin{itemize}
+    \item Congestión
+    \item Latencia
+    \item Pérdida de paquetes
+\end{itemize}
+
+\section*{26. Principal causa de pérdida de paquetes}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item c. la congestión de la red
+\end{itemize}
+
+\section*{27. Elemento usado para calcular el retardo extremo a extremo}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item a. el retardo de propagación
+\end{itemize}
+
+\section*{28. Relacione cada elemento}
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Retardo procesamiento & Capacidad de CPU \\
+\hline
+Jitter & Variación del retardo \\
+\hline
+Retardo propagación & Velocidad de la luz \\
+\hline
+Retardo transmisión & Tasa de envío \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{29. Entre las medidas correctivas se encuentra...}
+
+\textbf{Respuesta correcta:}
+
+\begin{itemize}
+    \item d. modificar el uso de la red
+\end{itemize}
+
+\end{document}
