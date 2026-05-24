@@ -1,0 +1,339 @@
+\documentclass[12pt]{article}
+
+% ==========================================
+% PAQUETES
+% ==========================================
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{caption}
+
+% ==========================================
+% CONFIGURACIÓN
+% ==========================================
+
+\geometry{margin=1in}
+\onehalfspacing
+
+\begin{document}
+
+% ==========================================
+% PORTADA
+% ==========================================
+
+\begin{titlepage}
+    \centering
+
+    % Logo opcional
+    % \includegraphics[width=0.25\textwidth]{logo.png}
+    % \vspace{1cm}
+
+    {\scshape\LARGE Matemáticas para Ciencia de Datos \par}
+
+    \vspace{2cm}
+
+    {\Huge\bfseries Actividad de Aprendizaje 2.2 \par}
+
+    \vspace{0.7cm}
+
+    {\Large
+    Análisis de un Set de Datos Multivariable\\
+    con Distribuciones Multimodales
+    \par}
+
+    \vspace{2.5cm}
+
+    \begin{flushleft}
+    \large
+    \textbf{Alumno:} Emilio Izquierdo Montero \\[0.3cm]
+
+    \textbf{Profesor:} Adán Mendoza Soria \\[0.3cm]
+
+    \textbf{Grupo / Semestre:} 8 \\[0.3cm]
+
+    \textbf{Fecha:} 24 de mayo de 2026
+    \end{flushleft}
+
+    \vfill
+
+\end{titlepage}
+
+
+\tableofcontents
+\newpage
+
+
+\section{Introducción}
+
+En esta actividad se realizó el análisis de un conjunto de datos multivariable
+utilizando herramientas estadísticas y visuales en Python.
+
+El objetivo principal fue estudiar el comportamiento de distribuciones
+multimodales, así como comprender el impacto que tienen sobre las medidas de
+tendencia central y el análisis exploratorio de datos.
+
+Para ello se simuló un sistema de monitoreo de servidores con variables como:
+
+\begin{itemize}
+    \item Tiempo de respuesta del sistema
+    \item Uso de CPU
+    \item Consumo de memoria
+\end{itemize}
+
+El dataset fue construido utilizando combinaciones de distribuciones normales
+para generar comportamientos multimodales y analizar posibles correlaciones
+entre variables.
+
+\section{Generación del Dataset}
+
+El dataset fue generado artificialmente mediante Python utilizando las
+bibliotecas:
+
+\begin{itemize}
+    \item NumPy
+    \item Pandas
+    \item Matplotlib
+    \item Seaborn
+\end{itemize}
+
+Se generaron 1000 registros correspondientes al comportamiento de un sistema
+de servidores.
+
+La variable principal, correspondiente al tiempo de respuesta, fue creada
+mediante la combinación de dos distribuciones normales:
+
+\[
+X = 0.6 \cdot N(120,15) + 0.4 \cdot N(300,40)
+\]
+
+Esto permitió producir una distribución bimodal, representando dos estados
+distintos del sistema:
+
+\begin{itemize}
+    \item Servidores en operación normal
+    \item Servidores bajo alta carga
+\end{itemize}
+
+
+\section{Medidas de Tendencia Central}
+
+\subsection{Media}
+
+La media representa el promedio de todos los valores de una variable.
+
+\[
+\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_i
+\]
+
+La media permite obtener una idea general del comportamiento promedio del
+sistema.
+
+\subsection{Mediana}
+
+La mediana corresponde al valor central de un conjunto de datos ordenado.
+
+Es especialmente útil cuando existen valores extremos o distribuciones
+asimétricas, ya que es menos sensible a valores atípicos que la media.
+
+\subsection{Moda}
+
+La moda representa el valor o conjunto de valores con mayor frecuencia dentro
+de una distribución.
+
+En distribuciones multimodales pueden existir múltiples modas, lo cual indica
+la presencia de distintos grupos o comportamientos dentro de los datos.
+
+
+\section{Distribuciones Multimodales}
+
+Las distribuciones multimodales contienen más de un pico principal dentro de
+su histograma.
+
+En este caso, la variable de tiempo de respuesta presentó dos agrupamientos
+claramente diferenciados:
+
+\begin{itemize}
+    \item Un grupo de baja latencia
+    \item Un grupo de alta latencia
+\end{itemize}
+
+Esto evidencia que el sistema presenta distintos estados operativos.
+
+La media puede resultar engañosa en estos escenarios, ya que puede ubicarse en
+una región donde realmente existen pocos datos.
+
+
+\section{Resultados Estadísticos}
+
+La Tabla \ref{tab:estadisticas} muestra las principales medidas estadísticas
+calculadas para cada variable del dataset.
+
+\begin{table}[H]
+\centering
+
+\caption{Medidas estadísticas del dataset}
+\label{tab:estadisticas}
+
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Variable} & \textbf{Media} & \textbf{Mediana} & \textbf{Moda} & \textbf{Varianza} & \textbf{Desv. Est.} \\
+\midrule
+
+Tiempo de Respuesta & 191.52 & 152.84 & 117.23 & 7741.34 & 87.98 \\
+
+Uso de CPU & 69.41 & 66.28 & 58.17 & 235.76 & 15.35 \\
+
+Memoria & 1452.61 & 1398.74 & 1204.55 & 132544.82 & 364.06 \\
+
+\bottomrule
+\end{tabular}
+
+\end{table}
+
+Los resultados muestran una dispersión considerable en las variables,
+especialmente en el tiempo de respuesta y el consumo de memoria.
+
+La diferencia entre media y mediana sugiere la presencia de distribuciones
+asimétricas y multimodales.
+
+
+\section{Histogramas}
+
+Los histogramas permiten visualizar la distribución de cada variable y detectar
+la presencia de múltiples agrupamientos dentro de los datos.
+
+\subsection{Histograma del Tiempo de Respuesta}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/proyectos/adan1/graficas/hist_respuesta.png}
+\caption{Histograma del tiempo de respuesta}
+\end{figure}
+
+En este histograma se observan claramente dos picos principales, lo que
+indica una distribución bimodal.
+
+Esto sugiere la existencia de dos estados operativos distintos en el sistema.
+
+
+\subsection{Histograma del Uso de CPU}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/proyectos/adan1/graficas/hist_cpu.png}
+\caption{Histograma del uso de CPU}
+\end{figure}
+
+El uso de CPU presenta una distribución más dispersa, aunque aún se observan
+agrupamientos relacionados con los distintos niveles de carga del sistema.
+
+
+\subsection{Histograma del Consumo de Memoria}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/proyectos/adan1/graficas/hist_memoria.png}
+\caption{Histograma del consumo de memoria}
+\end{figure}
+
+El consumo de memoria presenta una tendencia creciente y una dispersión amplia,
+relacionada con el comportamiento del tiempo de respuesta y el uso de CPU.
+
+
+\section{Gráficos de Dispersión}
+
+\subsection{Tiempo de Respuesta vs Uso de CPU}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/proyectos/adan1/graficas/scatter_respuesta_cpu.png}
+\caption{Tiempo de respuesta vs uso de CPU}
+\end{figure}
+
+Se observa una correlación positiva entre ambas variables:
+a mayor tiempo de respuesta, mayor uso de CPU.
+
+También se distinguen agrupamientos que podrían representar diferentes estados
+de carga del sistema.
+
+% -----------------------------------------------------
+
+\subsection{Tiempo de Respuesta vs Consumo de Memoria}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/proyectos/adan1/graficas/scatter_respuesta_memoria.png}
+\caption{Tiempo de respuesta vs consumo de memoria}
+\end{figure}
+
+Existe una relación creciente entre el tiempo de respuesta y el consumo de
+memoria.
+
+Los datos muestran la presencia de clusters o conglomerados asociados a
+distintos niveles de rendimiento.
+
+
+\subsection{Uso de CPU vs Consumo de Memoria}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/proyectos/adan1/graficas/scatter_cpu_memoria.png}
+\caption{Uso de CPU vs consumo de memoria}
+\end{figure}
+
+La relación entre CPU y memoria también presenta una tendencia positiva,
+aunque con mayor dispersión.
+
+Esto indica que ambas variables están parcialmente relacionadas.
+
+
+\section{Análisis de Resultados}
+
+A partir del análisis estadístico y visual se identificaron varios patrones
+importantes dentro del dataset.
+
+Los histogramas permitieron detectar claramente la multimodalidad en el tiempo
+de respuesta, evidenciando la existencia de distintos comportamientos dentro
+del sistema.
+
+Los gráficos de dispersión mostraron correlaciones positivas entre las
+variables analizadas, especialmente entre:
+
+\begin{itemize}
+    \item Tiempo de respuesta y uso de CPU
+    \item Tiempo de respuesta y consumo de memoria
+\end{itemize}
+
+Además, se observaron agrupamientos o clusters que sugieren diferentes estados
+operativos de los servidores.
+
+Esto demuestra que las visualizaciones aportan información adicional que no
+puede identificarse únicamente mediante medidas numéricas.
+
+Para modelos predictivos, este comportamiento implica que podrían existir
+subpoblaciones dentro de los datos, por lo que técnicas como clustering o
+segmentación podrían mejorar significativamente el rendimiento de modelos de
+machine learning.
+\section{Conclusiones}
+
+Los resultados obtenidos demuestran que las medidas estadísticas tradicionales
+no siempre son suficientes para describir correctamente un conjunto de datos.
+
+Las distribuciones multimodales pueden ocultar información importante cuando
+solamente se utiliza la media como referencia.
+
+Las visualizaciones permitieron detectar patrones, agrupamientos y posibles
+correlaciones entre variables, proporcionando una interpretación más completa
+del comportamiento del sistema.
+
+
+\end{document}
