@@ -1,0 +1,296 @@
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{float}
+
+\geometry{margin=2.5cm}
+
+\lstset{
+    language=Prolog,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    frame=single,
+    breaklines=true
+}
+
+% portada 
+\begin{document}
+
+\begin{titlepage}
+    \centering
+
+    % Logo opcional
+    %\includegraphics[width=0.3\textwidth]{logo.png}\par\vspace{1cm}
+
+    {\scshape\Large Programación funcional \par}
+    \vspace{1.5cm}
+
+    {\huge\bfseries Reporte de Práctica en SWI-Prolog \par}
+    \vspace{0.5cm}
+    {\Large Tarea 2 \par}
+
+    \vfill
+
+    {\large
+    Nombre del Alumno: Emilio Izquierdo Montero {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Profesor: Octavo Guzman Peñaloza {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Grupo / Semestre: 8 {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Fecha: 26 de mayo del 2026 {\hspace{6cm}}
+    \par}
+
+    \vfill
+
+\end{titlepage}
+
+\newpage
+
+\section{Introducción}
+
+La programación lógica es un paradigma de programación basado en la lógica formal y el razonamiento matemático, a diferencia de otros paradigmas donde el programador indica paso a paso cómo resolver un problema, en la programación lógica se describen hechos, relaciones y reglas que representan conocimiento.
+
+Uno de los lenguajes más representativos de este paradigma es Prolog, el cual permite representar conocimiento y generar inferencias automáticas mediante consultas lógicas.
+
+La diferencia principal entre el paradigma imperativo y el declarativo consiste en que los lenguajes imperativos indican cómo resolver un problema paso a paso, mientras que en los declarativos se describe qué se desea obtener.
+
+La importancia de Prolog en Inteligencia Artificial radica en su capacidad para representar conocimiento simbólico, realizar inferencias automáticas y construir sistemas expertos, motores de recomendación y aplicaciones basadas en razonamiento lógico.
+
+\section{Base de Conocimientos}
+
+\subsection{Hechos y Reglas sobre Startups}
+
+\begin{lstlisting}
+
+% hechos
+
+startup(innovaciondudosa).
+startup(leppe).
+startup(lotus).
+startup(rebonet).
+startup(luzmaya).
+startup(smartguide).
+startup(laika).
+startup(centinela).
+
+usa_tecnologia(innovaciondudosa, agente_IA).
+usa_tecnologia(innovaciondudosa, base_de_datos).
+
+usa_tecnologia(leppe, tecnologia_emergente).
+usa_tecnologia(leppe, inteligencia_artificial).
+usa_tecnologia(leppe, vision_computacional).
+
+usa_tecnologia(lotus, redes_neuronales).
+usa_tecnologia(lotus, vision_computacional).
+usa_tecnologia(lotus, inteligencia_artificial).
+
+usa_tecnologia(rebonet, industria_pecuaria).
+usa_tecnologia(rebonet, material_organico).
+
+usa_tecnologia(luzmaya, energias_renovables).
+
+usa_tecnologia(smartguide, iot).
+usa_tecnologia(smartguide, industria40).
+
+usa_tecnologia(laika, redes_neuronales).
+usa_tecnologia(laika, vision_computacional).
+
+usa_tecnologia(centinela, redes_neuronales).
+usa_tecnologia(centinela, vision_computacional).
+
+especialistas(luis, vision_computacional).
+especialistas(luis, inteligencia_artificial).
+
+especialistas(emilio, vision_computacional).
+especialistas(emilio, inteligencia_artificial).
+especialistas(emilio, redes_neuronales).
+especialistas(emilio, repositorios).
+
+especialistas(brian, inteligencia_artificial).
+
+especialistas(teresa, iot).
+especialistas(teresa, industria40).
+
+especialistas(rene, energias_renovables).
+especialistas(rene, iot).
+
+inversion_economica(leppe).
+inversion_economica(rebonet).
+
+% reglas
+
+startup_ia(X):-
+    usa_tecnologia(X, inteligencia_artificial).
+
+startup_exitosa(X):-
+    usa_tecnologia(X, inteligencia_artificial),
+    inversion_economica(X).
+
+startup_sustentable(X):-
+    usa_tecnologia(X, energias_renovables);
+    usa_tecnologia(X, material_organico).
+
+startup_futurista(X):-
+    usa_tecnologia(X, inteligencia_artificial),
+    usa_tecnologia(X, vision_computacional).
+
+colaborador_ideal(Persona, Startup):-
+    especialistas(Persona, Tecnologia),
+    usa_tecnologia(Startup, Tecnologia).
+
+ecosistema_avanzado(X):-
+    usa_tecnologia(X, redes_neuronales),
+    usa_tecnologia(X, vision_computacional).
+
+\end{lstlisting}
+
+\subsection{Hechos y Reglas sobre Pensadores}
+
+\begin{lstlisting}
+
+
+filosofo(descartes).
+filosofo(platon).
+filosofo(aristoteles).
+filosofo(socrates).
+
+fisico(einstein).
+fisico(newton).
+fisico(galileo).
+fisico(tesla).
+
+matematico(newton).
+matematico(einstein).
+matematico(gauss).
+matematico(euler).
+
+quimico(bohr).
+quimico(curie).
+quimico(lavoisier).
+quimico(dalton).
+
+astronomo(copernico).
+astronomo(hubble).
+astronomo(webb).
+astronomo(galileo).
+
+
+maestro(einstein, tesla).
+maestro(lavoisier, curie).
+maestro(copernico, galileo).
+maestro(platon, aristoteles).
+
+
+sabe_matematicas(X) :-
+    matematico(X).
+
+sabe_astronomia(X) :-
+    astronomo(X).
+
+sabe_quimica(X) :-
+    quimico(X).
+
+sabe_filosofia(X) :-
+    filosofo(X).
+
+sabe_fisica(X) :-
+    fisico(X).
+
+
+cientifico_integral(X) :-
+    fisico(X),
+    matematico(X).
+
+pensador(X) :-
+    filosofo(X),
+    fisico(X).
+
+erudito(X) :-
+    matematico(X),
+    filosofo(X).
+
+erudito(X) :-
+    fisico(X),
+    filosofo(X).
+
+\end{lstlisting}
+
+\section{Evidencias de Ejecución}
+
+\subsection{Carga del Archivo en SWI-Prolog}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{/home/emilio/Descargas/cargapro.png}
+    \caption{Carga correcta del archivo .pro}
+\end{figure}
+
+\subsection{Consulta con Variables}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{/home/emilio/Descargas/variables.png}
+    \caption{Consulta utilizando variables}
+\end{figure}
+
+%-----------------------------------------------------
+
+\subsection{Uso de Reglas}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{/home/emilio/Descargas/reclas.png}
+    \caption{Uso de reglas lógicas}
+\end{figure}
+
+%-----------------------------------------------------
+
+\subsection{Backtracking}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{/home/emilio/Descargas/final.png}
+    \caption{Resultados múltiples mediante backtracking}
+\end{figure}
+
+%=====================================================
+\section{Explicación de Resultados}
+%=====================================================
+
+Durante la ejecución de las consultas, Prolog utilizó los hechos y reglas almacenados en la base de conocimiento para responder automáticamente a cada pregunta realizada.
+
+En las consultas simples, el sistema únicamente verificó si el hecho existía dentro de la base de conocimientos.
+
+En las consultas con variables, Prolog realizó un proceso de búsqueda para encontrar todos los valores que cumplían las condiciones indicadas.
+
+Las reglas permitieron generar nuevo conocimiento a partir de hechos ya existentes. Por ejemplo, mediante la regla \texttt{startup\_exitosa(X)}, el sistema pudo inferir qué empresas utilizaban inteligencia artificial y además contaban con inversión económica.
+
+El proceso de inferencia consiste en deducir nueva información utilizando reglas lógicas. Asimismo, el backtracking permitió explorar múltiples soluciones posibles cuando existía más de una respuesta válida para una consulta.
+
+\section{Análisis Técnico y Reflexión}
+
+La programación lógica presenta diferencias importantes respecto a lenguajes imperativos como Java, Python o C++. En los lenguajes tradicionales se especifica paso a paso cómo resolver un problema mediante instrucciones y estructuras de control.
+
+En contraste, Prolog trabaja describiendo hechos y relaciones, permitiendo que el motor lógico determine automáticamente las respuestas mediante inferencia.
+
+Entre las ventajas observadas se encuentran la facilidad para representar conocimiento, la capacidad de generar inferencias y la implementación sencilla de sistemas expertos.
+
+Una de las principales dificultades fue comprender el funcionamiento del backtracking y la forma en que Prolog evalúa las reglas para encontrar soluciones.
+
+Este paradigma puede aplicarse en sistemas inteligentes reales como motores de recomendación, asistentes virtuales, sistemas expertos médicos, análisis semántico y aplicaciones de Inteligencia Artificial simbólica.
+
+\section{Conclusiones}
+
+La práctica permitió comprender el funcionamiento básico de la programación lógica utilizando Prolog. Se observó cómo es posible representar conocimiento mediante hechos y reglas, además de generar inferencias automáticas utilizando consultas lógicas.
+
+\end{document}
