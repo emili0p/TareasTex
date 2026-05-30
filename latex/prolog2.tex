@@ -1,0 +1,446 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[export]{adjustbox}
+
+\geometry{margin=1in}
+\onehalfspacing
+
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+
+\lstset{
+    backgroundcolor=\color{codegray},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+
+    {\scshape\Large Programación funcional \par}
+    \vspace{1.5cm}
+
+    {\huge\bfseries Base de Conocimientos Familiar en Prolog \par}
+    \vspace{0.5cm}
+    {\Large Tarea 2 \par}
+
+    \vfill
+
+    {\large
+    Nombre del Alumno: Emilio Izquierdo Montero {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Profesor: Octavo Guzman Peñaloza {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Grupo / Semestre: 8 {\hspace{6cm}} \\
+    \vspace{0.3cm}
+    Fecha: 29 de mayo del 2026 {\hspace{6cm}}
+    \par}
+
+    \vfill
+
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Introducción}
+
+En esta actividad se desarrolló una base de conocimientos familiar utilizando Prolog. El sistema permite inferir relaciones de parentesco a partir de hechos básicos definidos mediante las relaciones padre/2 y madre/2.
+
+La práctica incluye más de 15 personas, 3 generaciones familiares, diferentes ramas familiares y relaciones tanto paternas como maternas.
+
+\section{Objetivo}
+
+Construir un sistema lógico familiar capaz de inferir relaciones de parentesco utilizando programación lógica en Prolog.
+
+\section{Premisa Fundamental}
+
+La base de conocimientos fue construida únicamente utilizando los hechos básicos:
+
+\begin{lstlisting}[language=Prolog]
+padre(Padre, Hijo).
+madre(Madre, Hijo).
+\end{lstlisting}
+
+A partir de estas relaciones se infirieron automáticamente las demás relaciones familiares mediante reglas.
+
+\section{Estructura de la Base de Conocimientos}
+
+\subsection{Hechos principales}
+
+\begin{lstlisting}[language=Prolog]
+
+/* PADRES */
+
+padre(roberto, carlos).
+padre(roberto, patricia).
+padre(roberto, miguel).
+
+padre(carlos, daniel).
+padre(carlos, sofia).
+
+padre(miguel, andres).
+padre(miguel, camila).
+
+padre(jose, laura).
+padre(jose, ricardo).
+
+padre(ricardo, valeria).
+padre(ricardo, fernando).
+
+padre(daniel, mateo).
+
+padre(andres, lucia).
+
+
+/* MADRES */
+
+madre(elena, carlos).
+madre(elena, patricia).
+madre(elena, miguel).
+
+madre(laura, daniel).
+madre(laura, sofia).
+
+madre(silvia, andres).
+madre(silvia, camila).
+
+madre(marta, laura).
+madre(marta, ricardo).
+
+madre(patricia, valeria).
+madre(patricia, fernando).
+
+madre(paula, mateo).
+
+madre(karla, lucia).
+
+\end{lstlisting}
+
+\subsection{Captura de los hechos}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{/home/emilio/Descargas/hechos_base.png}
+    \caption{Captura de pantalla de los hechos principales en Prolog}
+    \label{fig:hechos}
+    \small\textit{Se muestran las relaciones padre/2 y madre/2 definidas para la familia.}
+\end{figure}
+
+\section{Relaciones inferidas}
+
+\subsection{Relaciones básicas}
+
+\begin{itemize}
+    \item hijo/2
+    \item hija/2
+    \item hermano/2
+    \item hermana/2
+\end{itemize}
+
+\begin{lstlisting}[language=Prolog]
+
+hijo(X,Y) :-
+    padre(Y,X).
+
+hijo(X,Y) :-
+    madre(Y,X).
+
+hija(X,Y) :-
+    padre(Y,X).
+
+hija(X,Y) :-
+    madre(Y,X).
+
+hermano(X,Y) :-
+    padre(P,X),
+    padre(P,Y),
+    madre(M,X),
+    madre(M,Y),
+    X \= Y.
+
+hermana(X,Y) :-
+    padre(P,X),
+    padre(P,Y),
+    madre(M,X),
+    madre(M,Y),
+    X \= Y.
+
+\end{lstlisting}
+
+\subsection{Captura de relaciones básicas}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{/home/emilio/Descargas/relaciones_basicas.png}
+    \caption{Captura de las reglas para relaciones básicas (hijo, hija, hermano, hermana)}
+    \label{fig:basicas}
+    \small\textit{Reglas implementadas en Prolog para inferir parentesco básico.}
+\end{figure}
+
+\subsection{Relaciones intermedias}
+
+\begin{itemize}
+    \item abuelo/2
+    \item abuela/2
+    \item tio/2
+    \item tia/2
+    \item primo/2
+    \item prima/2
+\end{itemize}
+
+\begin{lstlisting}[language=Prolog]
+
+abuelo(X,Y) :-
+    padre(X,Z),
+    padre(Z,Y).
+
+abuelo(X,Y) :-
+    padre(X,Z),
+    madre(Z,Y).
+
+abuela(X,Y) :-
+    madre(X,Z),
+    padre(Z,Y).
+
+abuela(X,Y) :-
+    madre(X,Z),
+    madre(Z,Y).
+
+tio(X,Y) :-
+    hermano(X,Z),
+    padre(Z,Y).
+
+tio(X,Y) :-
+    hermano(X,Z),
+    madre(Z,Y).
+
+tia(X,Y) :-
+    hermana(X,Z),
+    padre(Z,Y).
+
+tia(X,Y) :-
+    hermana(X,Z),
+    madre(Z,Y).
+
+\end{lstlisting}
+
+\subsection{Captura de relaciones intermedias}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{/home/emilio/Descargas/relaciones_intermedias.png}
+    \caption{Captura de las reglas para relaciones intermedias (abuelo, abuela, tío, tía)}
+    \label{fig:intermedias}
+    \small\textit{Reglas que combinan relaciones básicas para formar parentescos más complejos.}
+\end{figure}
+
+\subsection{Relaciones avanzadas}
+
+\begin{itemize}
+    \item ancestro/2
+    \item descendiente/2
+    \item familiar\_directo/2
+\end{itemize}
+
+\begin{lstlisting}[language=Prolog]
+
+ancestro(X,Y) :-
+    padre(X,Y).
+
+ancestro(X,Y) :-
+    madre(X,Y).
+
+ancestro(X,Y) :-
+    padre(X,Z),
+    ancestro(Z,Y).
+
+ancestro(X,Y) :-
+    madre(X,Z),
+    ancestro(Z,Y).
+
+descendiente(X,Y) :-
+    ancestro(Y,X).
+
+\end{lstlisting}
+
+\subsection{Captura de relaciones avanzadas}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{/home/emilio/Descargas/relaciones_avanzadas.png}
+    \caption{Captura de las reglas para relaciones avanzadas (ancestro, descendiente)}
+    \label{fig:avanzadas}
+    \small\textit{Reglas recursivas que permiten inferir múltiples generaciones.}
+\end{figure}
+
+\section{Consultas obligatorias}
+
+\subsection{Consulta de abuelos}
+
+\begin{lstlisting}[language=Prolog]
+abuelo(X, mateo).
+\end{lstlisting}
+
+Resultado esperado:
+
+\begin{lstlisting}
+X = carlos ;
+X = roberto.
+\end{lstlisting}
+
+\subsection{Captura de la consulta}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{/home/emilio/Descargas/consulta1.png}
+    \caption{Consulta ejecutada: \texttt{abuelo(X, mateo)}}
+    \label{fig:cons_abuelos}
+    \small\textit{Resultado: Los abuelos de mateo son carlos y roberto.}
+\end{figure}
+
+\subsection{Consulta de hermanos}
+
+\begin{lstlisting}[language=Prolog]
+hermano(X, sofia).
+\end{lstlisting}
+
+Resultado esperado:
+
+\begin{lstlisting}
+X = daniel.
+\end{lstlisting}
+
+\subsection{Captura de la consulta}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{/home/emilio/Descargas/consultahermanos.png}
+    \caption{Consulta ejecutada: \texttt{hermano(X, sofia)}}
+    \label{fig:cons_hermanos}
+    \small\textit{Resultado: La única hermana de sofia es daniel.}
+\end{figure}
+
+\subsection{Consulta de ancestros}
+
+\begin{lstlisting}[language=Prolog]
+ancestro(X, lucia).
+\end{lstlisting}
+
+Resultado esperado:
+
+\begin{lstlisting}
+X = andres ;
+X = karla ;
+X = miguel ;
+X = silvia ;
+X = roberto ;
+X = elena.
+\end{lstlisting}
+
+\subsection{Captura de la consulta}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{/home/emilio/Descargas/ancestros.png}
+    \caption{Consulta ejecutada: \texttt{ancestro(X, lucia)}}
+    \label{fig:cons_ancestros}
+    \small\textit{Resultado: Todos los ancestros de lucia en orden de cercanía.}
+\end{figure}
+
+\subsection{Consulta de tíos}
+
+\begin{lstlisting}[language=Prolog]
+tio(X, mateo).
+\end{lstlisting}
+
+Resultado esperado:
+
+\begin{lstlisting}
+X = sofia.
+\end{lstlisting}
+
+\subsection{Captura de la consulta}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{/home/emilio/Descargas/consultatios.png}
+    \caption{Consulta ejecutada: \texttt{tio(X, mateo)}}
+    \label{fig:cons_tios}
+    \small\textit{Resultado: El tío de mateo es sofia.}
+\end{figure}
+
+\subsection{Consulta de primos}
+
+\begin{lstlisting}[language=Prolog]
+primo(X, lucia).
+\end{lstlisting}
+
+Resultado esperado:
+
+\begin{lstlisting}
+false.
+\end{lstlisting}
+
+\subsection{Captura de la consulta}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{/home/emilio/Descargas/lucianotieneprimos.png}
+    \caption{Consulta ejecutada: \texttt{primo(X, lucia)}}
+    \label{fig:cons_primos}
+    \small\textit{Resultado: No hay primos registrados para lucia en la base de conocimientos.}
+\end{figure}
+
+\section{Ejemplo conceptual}
+
+\subsection{Hechos}
+
+\begin{lstlisting}[language=Prolog]
+
+padre(juan, carlos).
+madre(maria, carlos).
+
+padre(carlos, ana).
+madre(laura, ana).
+
+\end{lstlisting}
+
+\subsection{Regla inferida}
+
+\begin{lstlisting}[language=Prolog]
+
+abuelo(X,Y) :-
+    padre(X,Z),
+    padre(Z,Y).
+
+\end{lstlisting}
+
+\subsection{Consulta}
+
+\begin{lstlisting}[language=Prolog]
+abuelo(X, ana).
+\end{lstlisting}
+
+\subsection{Resultado esperado}
+
+\begin{lstlisting}
+X = juan.
+\end{lstlisting}
+
+\section{Conclusión}
+
+Con esta práctica fue posible desarrollar una base de conocimientos familiar utilizando Prolog y programación lógica. A partir de hechos básicos se lograron inferir múltiples relaciones familiares mediante reglas y recursividad.
+
+\end{document}
