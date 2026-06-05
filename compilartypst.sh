@@ -116,13 +116,13 @@ compile() {
 
     if [ $result -eq 0 ] && [ -f "$TMP_PDF" ]; then
       mv "$TMP_PDF" "$FINAL_PDF"
-      echo -e "${GREEN}✓ PDF guardado en: $FINAL_PDF${NC}"
+      echo -e "${GREEN}PDF guardado en: $FINAL_PDF${NC}"
 
       if [ "$OPEN_MODE" = true ]; then
         open_pdf "$FINAL_PDF"
       fi
     else
-      echo -e "${RED}✗ Error al compilar${NC}"
+      echo -e "${RED}Error al compilar${NC}"
       return 1
     fi
   fi
