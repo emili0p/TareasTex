@@ -94,7 +94,7 @@
 )
 
 #resume-entry(
-  title: "Google Cloud Computing Foundations",
+  title: "Google Cloud Computing Foundations Certificate",
   location: "Google · Nov 2025",
   date: "",
   description: "Fundamentos de computación en la nube con Google Cloud Platform"
