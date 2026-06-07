@@ -1,59 +1,119 @@
-#import "@preview/modern-cv:0.2.0": *
+#import "@preview/modern-cv:0.10.0": *
 
-#show: modern-cv.with(
-  name: "Emilio Izquierdo Montero",
-  title: "Ingeniero en Sistemas Computacionales",
-  location: "Matehuala, San Luis Potosí, México",
-  email: "cucusneitor@hotmail.com",
-  phone: "+52 488 885 3863",
-  github: "https://github.com/emili0p",
-  linkedin: "https://mx.linkedin.com/in/emilio-izquierdo-91b16933a",
-  skills: (
-    "Redes", "Desarrollo de software", "Sistemas Operativos",
-    "Linux", "AWS", "Google Cloud",
-    "Inglés B2 (TOEFL ITP)", "Git / GitHub",
-    "Liderazgo técnico", "Comunidades TI"
+#show: resume.with(
+  author: (
+    firstname: "Emilio",
+    lastname: "Izquierdo Montero",
+    email: "cucusneitor@hotmail.com",
+    phone: "(+52) 488 885 3863",
+    github: "emili0p",
+    linkedin: "emilio-izquierdo-91b16933a",
+    address: "Matehuala, San Luis Potosí, México",
+    positions: (
+      "Ingeniero en Sistemas Computacionales",
+    )
   ),
+  profile-picture: none,
+  date: datetime.today().display(),
+  paper-size: "us-letter"
 )
 
-#info-section("Resumen profesional")[
-  Ingeniero en Sistemas Computacionales con experiencia en **redes** y **Linux**.
-  Experiencia en desarrollo de software con proyectos escolares y personales.
-  Líder del AWS Student Group, organizando eventos y talleres sobre computación en la nube.
-  Certificado en Google Cloud Computing Foundations y TOEFL ITP B2.
-  Apasionado por entender cómo es que las cosas funcionan, la automatización, scripting, el software libre 
-  y el desarrollo de comunidades técnicas con las cuales compartir experiencias y conocimientos.
+= Resumen profesional
+
+#resume-entry(
+  title: "",
+  date: "",
+  description: [
+    Ingeniero en Sistemas Computacionales con experiencia en #strong[redes] y #strong[Linux].
+    Líder del AWS Student Group, organizando eventos y talleres sobre computación en la nube.
+    Certificado en Google Cloud Computing Foundations y TOEFL ITP B2.
+    Apasionado por la automatización, scripting, software libre y el desarrollo de comunidades técnicas.
+  ]
+)
+
+= Experiencia
+
+#resume-entry(
+  title: "AWS Student Group Leader",
+  location: "AWS · Matehuala, SLP",
+  date: "Mar 2025 - Mar 2026",
+  description: [
+    - Organización de eventos y talleres prácticos sobre servicios AWS (EC2, S3, Lambda)
+    - Coordinación de comunidad estudiantil enfocada en computación en la nube
+    - Promoción de Linux, redes y software libre en entornos académicos
+    - Gestión de grupos y planificación de actividades técnicas
+  ]
+)
+
+= Proyectos destacados
+
+#resume-entry(
+  title: "taged",
+  location: "Rust",
+  date: "",
+  description: "Editor TUI estilo Vim para edición de metadatos de música"
+)
+
+#resume-entry(
+  title: "FRN",
+  location: "C",
+  date: "",
+  description: "Lenguaje de programación propio inspirado en Python y Lisp"
+)
+
+#resume-entry(
+  title: "wlb (we love bash)",
+  location: "Bash",
+  date: "",
+  description: "Colección personal de scripts de automatización para Linux"
+)
+
+#resume-entry(
+  title: "kafkaexample / hadoopexample",
+  location: "Python / Jupyter",
+  date: "",
+  description: "Proyectos de Big Data procesando streams con Kafka y MapReduce con Hadoop"
+)
+
+= Educación
+
+#resume-entry(
+  title: "Ingeniería en Sistemas Computacionales",
+  location: "Tecnológico Nacional de México - Campus Matehuala",
+  date: "2022 - 2026",
+  description: ""
+)
+
+= Certificaciones
+
+#resume-entry(
+  title: "TOEFL ITP (B2)",
+  location: "Dic 2025 - Dic 2027",
+  date: "",
+  description: "Certificación de inglés como lengua extranjera"
+)
+
+#resume-entry(
+  title: "Google Cloud Computing Foundations",
+  location: "Google · Nov 2025",
+  date: "",
+  description: "Fundamentos de computación en la nube con Google Cloud Platform"
+)
+
+= Idiomas y habilidades
+
+#resume-item[
+  #strong[Idiomas:] · Español (nativo) · Inglés B2 (TOEFL ITP)
 ]
 
-#info-section("Experiencia")[
-  *AWS Student Group Leader* \
-  Mar 2025 - Mar 2026 \
-  - Organización de eventos y talleres sobre servicios AWS. \
-  - Coordinación de comunidad estudiantil enfocada en computación en la nube. \
-  - Promoción de Linux, redes y software libre en entornos académicos.
+#resume-item[
+  #strong[Lenguajes:] · Rust · Python · Bash · C/C++ · Scala · TypeScript
 ]
 
-#info-section("Proyectos destacados")[
-  *taged* — Editor TUI estilo Vim para metadatos de música · `Rust` \
-  *FRN* — Lenguaje de programación inspirado en Python y Lisp · `C` \
-  *wlb (we love bash)* — Colección de scripts Bash para automatización · `Bash` \
-  *kafkaexample + hadoopexample* — Ejemplos de Big Data con Kafka y Hadoop · `Python` / `Jupyter`
+#resume-item[
+  #strong[Cloud & Big Data:] · AWS · Google Cloud · Kafka · Hadoop
 ]
 
-#info-section("Licencias y certificaciones")[
-  - **TOEFL ITP** (B2) — Dic 2025 - Dic 2027 \
-    *Inglés como lengua extranjera*
-
-  - **Google Cloud Computing Foundations Certificate** — Nov 2025 \
-    *Google* — ID: d59a4ed2-0cca-4323-8f40-93d47f7aeb13
-]
-
-#info-section("Educación")[
-  *Ingeniería en Sistemas Computacionales* \
-  Tecnológico Nacional de México - Campus Matehuala (2022 - 2026)
-]
-
-#info-section("Idiomas")[
-  - Español: Nativo \
-  - Inglés: B2 (TOEFL ITP)
+#resume-item[
+  #strong[Otros:] · Linux · Git · Redes · Scripting · Software Libre
 ]
