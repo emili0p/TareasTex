@@ -1,0 +1,81 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{chemfig}
+\usepackage{geometry}
+
+\geometry{margin=2.5cm}
+
+\title{Ejemplos de Fórmulas Químicas con \texttt{chemfig}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+
+La librería \texttt{chemfig} permite representar moléculas y estructuras químicas de forma sencilla.
+
+\subsection{Enlace simple}
+
+\[
+\chemfig{A-B}
+\]
+
+\subsection{Enlace doble}
+
+\[
+\chemfig{A=B}
+\]
+
+\section{Anillos}
+
+\subsection{Anillo de cinco miembros}
+
+\[
+\chemfig{A*5(-B=C-D-E=)}
+\]
+
+\subsection{Anillo incompleto}
+
+\[
+\chemfig{A*5(-B=C-D)}
+\]
+
+\section{Molécula de Cafeína}
+
+La siguiente estructura corresponde a una representación simplificada de la cafeína:
+
+\[
+\chemfig{*6((=O)-N(-)-(*5(-N=-N(-)-))=-(=O)-N(-)-)}
+\]
+
+\section{Acetaldehído}
+
+También es posible personalizar el estilo de los enlaces.
+
+\bigskip
+
+{\Large
+\setchemfig{
+    atom sep=2em,
+    bond style={
+        line width=1pt,
+        red,
+        dash pattern=on 2pt off 2pt
+    }
+}
+
+\chemname
+    {\chemfig{H-C(-[2]H)(-[6]H)-C(=[1]O)-[7]H}}
+    {Acetaldehído}
+}
+
+\section{Conclusión}
+
+La librería \texttt{chemfig} facilita la creación de fórmulas químicas, estructuras cíclicas y moléculas complejas directamente en \LaTeX, permitiendo además personalizar la apariencia de los enlaces y etiquetas.
+
+\end{document}
