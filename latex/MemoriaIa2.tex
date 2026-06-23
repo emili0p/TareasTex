@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{setspace}
 \usepackage{titlesec}
+\usepackage{hyperref}
 
 \geometry{margin=1in}
 \onehalfspacing
@@ -28,17 +29,103 @@
     \vfill
 
     {\large
-    Nombre del Alumno: Emilio Izquierdo Montero {\hspace{6cm}} \\
-    \vspace{0.3cm}
-    Profesor: Carlos Alberto Sanchez Garcia {\hspace{6cm}} \\
-    \vspace{0.3cm}
-    Grupo / Semestre: 9 {\hspace{6cm}} \\
-    \vspace{0.3cm}
-    Fecha: 30 de Junio del 2026 {\hspace{6cm}}
+    \begin{tabular}{rl}
+        Nombre del Alumno: & Emilio Izquierdo Montero \\
+        Profesor:          & Carlos Alberto Sanchez Garcia \\
+        Grupo / Semestre:  & 9 \\
+        Fecha:             & 30 de Junio del 2026 \\
+    \end{tabular}
     \par}
 
     \vfill
 
 \end{titlepage}
 
+\tableofcontents
+\newpage
+
+\section{Introducción}
+
+La presente memoria técnica documenta las actividades, prácticas y proyectos desarrollados durante el curso de verano de la asignatura 
+Inteligencia Artificial II, impartida por el profesor Carlos.
+En este documento se recopilan los conocimientos, herramientas y metodologías estudiadas a lo largo de la materia, 
+haciendo énfasis en el desarrollo e implementación de modelos de aprendizaje automático mediante el uso de TensorFlow.
+Asimismo, se presentan los resultados obtenidos y las experiencias adquiridas durante el proceso de aprendizaje.
+
+\newpage
+
+\section{Objetivo}
+
+Aplicar los fundamentos de la inteligencia artificial mediante el diseño, entrenamiento y evaluación de modelos de aprendizaje automático 
+utilizando TensorFlow, con el fin de comprender su funcionamiento y desarrollar soluciones capaces de resolver problemas de clasificación,
+predicción y reconocimiento de patrones.
+
+\newpage
+
+\section{Unidad 1}
+\subsection{¿Qué es TensorFlow?}
+
+TensorFlow es una biblioteca de código abierto especializada en aprendizaje automático e inteligencia artificial, desarrollada originalmente por la empresa Google, 
+Esta plataforma proporciona herramientas para diseñar, entrenar y desplegar modelos de redes neuronales y otros algoritmos de aprendizaje automático, 
+permitiendo aprovechar tanto procesadores convencionales (CPU) como aceleradores especializados como GPU y TPU.
+
+\vspace{0.5cm}
+
+Gracias a su flexibilidad y escalabilidad, TensorFlow es ampliamente utilizado en entornos académicos, de investigación e industriales para resolver problemas de clasificación, 
+regresión, visión por computadora, procesamiento de lenguaje natural y análisis de datos
+
+\vspace{0.5cm}
+
+El proyecto cuenta con una de las comunidades de desarrollo más grandes dentro del ecosistema de inteligencia artificial de código abierto. 
+Actualmente participan más de 3,800 colaboradores provenientes de distintas organizaciones y países.
+TensorFlow está desarrollado principalmente en C++ (56.1\%) y Python (25.3\%).
+
+
+\vspace{0.5cm}
+Para más información, consulta la \href{https://www.tensorflow.org}{página oficial de TensorFlow}.
+\newpage
+\subsection{Instalación de tensorflow}
+Para trabajar con TensorFlow de manera local fue necesario crear un entorno virtual de Python, un entorno virtual permite aislar las dependencias de un proyecto del resto del sistema, evitando conflictos entre versiones de bibliotecas y facilitando la administración de paquetes, escencial en sistemas linux.
+
+
+La creación del entorno virtual se realizó mediante el siguiente comando:
+
+\begin{verbatim}
+python -m venv venv
+\end{verbatim}
+
+Posteriormente, se activó el entorno virtual para que las instalaciones de paquetes se realizaran únicamente dentro de este entorno:
+
+\begin{verbatim}
+source venv/bin/activate
+\end{verbatim}
+
+Una vez activado el entorno, se procedió a instalar TensorFlow utilizando el gestor de paquetes \texttt{pip}:
+
+\begin{verbatim}
+pip install tensorflow
+\end{verbatim}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{/home/emilio/Imágenes/memoriaia/InstalacionTensorflow.png}
+    \caption{Instalacion de tensorflow con pip}
+\end{figure}
+
+Una ves hecho esto verificamos la lista de paquetes instalados con
+
+\begin{verbatim}
+pip list
+\end{verbatim}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\linewidth]{/home/emilio/Imágenes/memoriaia/listpip.png}
+    \caption{Paquetes de pip}
+\end{figure}
+% TODO
+%dejar bien esta figura 
+% incluir los calculos matematicos 
+% explicar que es una neurona
+% dejar biliografia
 \end{document}
