@@ -1,0 +1,114 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\geometry{a4paper, margin=1in}
+
+\title{Actividad 6: Gradiente Descendente en una Red Neuronal Artificial}
+\author{Emilio Izquierdo Montero}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Parámetros Iniciales del Problema}
+Basado en el ejercicio numérico del video, definimos las siguientes condiciones y variables del sistema:
+\begin{itemize}
+    \item \textbf{Entradas:} $x_1 = 2$, $x_2 = 1$
+    \item \textbf{Pesos iniciales (Época 1):} $w_1 = -0.5$, $w_2 = 0.5$
+    \item \textbf{Sesgo (Bias):} $b = 0$
+    \item \textbf{Valor esperado (Target):} $y = 0.6$
+    \item \textbf{Tasa de aprendizaje (Learning rate):} $\eta = 0.4$
+    \item \textbf{Función de activación:} Sigmoide $\sigma(h) = \frac{1}{1 + e^{-h}}$
+\end{itemize}
+
+\section{Fórmulas Utilizadas}
+\begin{enumerate}
+    \item \textbf{Suma neta:} $h = w_1x_1 + w_2x_2 + b$
+    \item \textbf{Salida predicha:} $\hat{y} = \sigma(h) = \frac{1}{1 + e^{-h}}$
+    \item \textbf{Error residual simple:} $e_{residual} = y - \hat{y}$
+    \item \textbf{Error cuadrático (Loss):} $E = (y - \hat{y})^2$
+    \item \textbf{Término de error del gradiente:} $\delta = (y - \hat{y}) \cdot \hat{y} \cdot (1 - \hat{y})$
+    \item \textbf{Incremento de pesos:} $\Delta w_i = \eta \cdot \delta \cdot x_i$
+    \item \textbf{Actualización de pesos:} $w_i^{nuevo} = w_i + \Delta w_i$
+\end{enumerate}
+
+\newpage
+
+\section{Desarrollo de las Épocas}
+
+\subsection{Época 1}
+\begin{itemize}
+    \item \textbf{Forward Pass:}
+    \[ h = (-0.5 \times 2) + (0.5 \times 1) = -1.0 + 0.5 = -0.5 \]
+    \[ \hat{y} = \sigma(-0.5) = 0.377 \]
+    \item \textbf{Cálculo de Errores:}
+    \[ e_{residual} = 0.6 - 0.377 = 0.223 \]
+    \[ E = (0.223)^2 = 0.049 \]
+    \item \textbf{Gradiente y Actualización:}
+    \[ \delta = 0.223 \times 0.377 \times (1 - 0.377) = 0.052 \]
+    \[ \Delta w_1 = 0.4 \times 0.052 \times 2 = 0.041 \implies w_1^{nuevo} = -0.5 + 0.041 = -0.459 \]
+    \[ \Delta w_2 = 0.4 \times 0.052 \times 1 = 0.020 \implies w_2^{nuevo} = 0.5 + 0.020 = 0.520 \]
+\end{itemize}
+
+\subsection{Época 2}
+\begin{itemize}
+    \item \textbf{Forward Pass:}
+    \[ h = (-0.459 \times 2) + (0.520 \times 1) = -0.918 + 0.520 = -0.398 \]
+    \[ \hat{y} = \sigma(-0.398) = 0.401 \]
+    \item \textbf{Cálculo de Errores:}
+    \[ e_{residual} = 0.6 - 0.401 = 0.199 \]
+    \[ E = (0.199)^2 = 0.0396 \]
+    \item \textbf{Gradiente y Actualización:}
+    \[ \delta = 0.199 \times 0.401 \times (1 - 0.401) = 0.0478 \]
+    \[ \Delta w_1 = 0.4 \times 0.0478 \times 2 = 0.0382 \implies w_1^{nuevo} = -0.459 + 0.0382 = -0.421 \]
+    \[ \Delta w_2 = 0.4 \times 0.0478 \times 1 = 0.0191 \implies w_2^{nuevo} = 0.520 + 0.0191 = 0.539 \]
+\end{itemize}
+
+\subsection{Época 3}
+\begin{itemize}
+    \item \textbf{Forward Pass:}
+    \[ h = (-0.421 \times 2) + (0.539 \times 1) = -0.842 + 0.539 = -0.303 \]
+    \[ \hat{y} = \sigma(-0.303) = 0.425 \]
+    \item \textbf{Cálculo de Errores:}
+    \[ e_{residual} = 0.6 - 0.425 = 0.175 \]
+    \[ E = (0.175)^2 = 0.0306 \]
+    \item \textbf{Gradiente y Actualización:}
+    \[ \delta = 0.175 \times 0.425 \times (1 - 0.425) = 0.0428 \]
+    \[ \Delta w_1 = 0.4 \times 0.0428 \times 2 = 0.0342 \implies w_1^{nuevo} = -0.421 + 0.0342 = -0.387 \]
+    \[ \Delta w_2 = 0.4 \times 0.0428 \times 1 = 0.0171 \implies w_2^{nuevo} = 0.539 + 0.0171 = 0.556 \]
+\end{itemize}
+
+\newpage
+
+\section{Respuestas del Cuestionario}
+
+\subsection{¿Cuál fue el Error Residual en la Época 1, 2 y 3?}
+El comportamiento del error residual simple disminuyó consistentemente y condisderablemente en cada iteración:
+\begin{itemize}
+    \item \textbf{Época 1:} $0.223$
+    \item \textbf{Época 2:} $0.199$
+    \item \textbf{Época 3:} $0.175$
+\end{itemize}
+
+\subsection{¿Cómo se comportó la salida predicha ($\hat{y}$) en cada época? ¿La red está aprendiendo?}
+La salida predicha evolucionó de la siguiente manera:
+\begin{itemize}
+    \item \textbf{Época 1:} $\hat{y} = 0.377$
+    \item \textbf{Época 2:} $\hat{y} = 0.401$
+    \item \textbf{Época 3:} $\hat{y} = 0.425$
+\end{itemize}
+\textbf{Conclusión:} \textbf{Sí, está aprendiendo.} Dado que nuestro target es $y = 0.6$, el incremento progresivo de $\hat{y}$ hacia ese valor demuestra que el algoritmo de optimización está minimizando la función de costo 
+\subsection{¿Cómo se comportaron los pesos $w_i$ en cada época?}
+Los pesos se reajustaron dinámicamente según la magnitud de sus entradas :
+\begin{itemize}
+    \item El peso \textbf{$w_1$} (asociado a $x_1 = 2$) aumentó su valor  desde $-0.5$ hasta $-0.387$, aproximándose hacia el cero.
+    \item El peso \textbf{$w_2$} (asociado a $x_2 = 1$) se incrementó positivamente de manera constante, pasando de $0.5$ a $0.556$.
+\end{itemize}
+Ambos pesos cambiaron en la dirección opuesta al gradiente.
+
+\end{document}
