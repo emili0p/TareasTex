@@ -1,0 +1,115 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{booktabs}
+\geometry{a4paper, margin=1in}
+
+\title{Actividad 6: Tangente Hiperbólica en una Red Neuronal Artificial}
+\author{Emilio Izquierdo Montero}
+\date{\today}
+
+\begin{document}
+
+\section*{Ejercicio: Red Neuronal con Tangente Hiperbólica}
+
+\subsection*{Datos Iniciales}
+\begin{itemize}
+    \item Entradas: $x_{1} = 0.5$, $x_{2} = -0.2$
+    \item Pesos iniciales: $w_{0} = 0.4$, $w_{1} = 0.3$
+    \item Tasa de aprendizaje ($\eta$): $0.5$
+    \item Valor objetivo ($y$): $1.0$
+    \item Función de activación (Tangente Hiperbólica): 
+    \[ f(z) = \tanh(z) = \frac{e^{z}-e^{-z}}{e^{z}+e^{-z}} \]
+    \item Derivada de $\tanh$: $f'(z) = 1 - f^2$
+\end{itemize}
+
+\subsection*{Demostración de la Derivada}
+Utilizando la regla del cociente $\left(\frac{u}{v}\right)' = \frac{u'v - uv'}{v^2}$:
+\[ \frac{d}{dz}\left[\frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}\right] = \frac{(e^{z}+e^{-z})(e^{z}+e^{-z}) - (e^{z}-e^{-z})(e^{z}-e^{-z})}{(e^{z}+e^{-z})^2} \]
+\[ = \frac{(e^{z}+e^{-z})^2 - (e^{z}-e^{-z})^2}{(e^{z}+e^{-z})^2} = 1 - \frac{(e^{z}-e^{-z})^2}{(e^{z}+e^{-z})^2} = 1 - f^2 \]
+
+---
+
+\section*{ÉPOCA 1}
+
+\subsubsection*{1. Calcular Salida / Forward Pass}
+\[ z = w_{0}x_{1} + w_{1}x_{2} \]
+\[ z = (0.4)(0.5) + (0.3)(-0.2) = 0.2 + (-0.06) = 0.14 \]
+\[ \hat{y} = f(z) = \tanh(0.14) \Rightarrow 0.139 \]
+
+\subsubsection*{2. Determinar el Error / LOSS}
+\[ E = (y - \hat{y})^2 = (1.0 - 0.139)^2 = 0.741 \]
+
+\subsubsection*{3. Modificar los Pesos}
+\textbf{3.1 Término de error ($\delta$):}
+\[ \delta = (y - \hat{y}) \cdot f'(z) = (y - \hat{y})(1 - \hat{y}^2) \]
+\[ \delta = (1.0 - 0.139)(1 - 0.139^2) = (0.861)(1 - 0.019) \]
+\[ \delta = (0.861)(0.981) = 0.844 \]
+
+\textbf{3.2 Calcular el incremento ($\Delta w_i = \eta \cdot \delta \cdot x_i$):}
+\[ \Delta w_{0} = 0.5 \cdot 0.844 \cdot 0.5 = 0.211 \]
+\[ \Delta w_{1} = 0.5 \cdot 0.844 \cdot (-0.2) = -0.0844 \]
+
+\textbf{3.3 Actualizar Pesos ($w_i = w_i + \Delta w_i$):}
+\[ w_{0} = 0.4 + 0.211 = 0.611 \]
+\[ w_{1} = 0.3 + (-0.0844) = 0.216 \]
+
+\subsubsection*{4. Estimar la Nueva Salida}
+\[ z = 0.611(0.5) + 0.216(-0.2) = 0.3055 - 0.0432 = 0.2623 \]
+\[ \hat{y} = \tanh(0.2623) = 0.2564 \]
+
+\subsubsection*{5. Nuevo Error}
+\[ E = (1.0 - 0.2564)^2 = 0.5529 \]
+
+---
+
+\section*{ÉPOCA 2}
+
+\subsubsection*{3. Modificar los Pesos}
+\textbf{3.1 Término de error ($\delta$):}
+\[ \delta = (1.0 - 0.2564)(1 - 0.2564^2) = (0.7436)(1 - 0.0658) \]
+\[ \delta = (0.7436)(0.9342) \approx 0.6924 \]
+
+\textbf{3.2 Calcular el incremento:}
+\[ \Delta w_{0} = 0.5 \cdot 0.6924 \cdot 0.5 = 0.1731 \]
+\[ \Delta w_{1} = 0.5 \cdot 0.6924 \cdot (-0.2) = -0.0692 \]
+
+\textbf{3.3 Actualizar Pesos:}
+\[ w_{0} = 0.611 + 0.1731 = 0.7841 \]
+\[ w_{1} = 0.216 + (-0.0692) = 0.1468 \]
+
+\subsubsection*{4. Estimar la Nueva Salida}
+\[ z = 0.7841(0.5) + 0.1468(-0.2) = 0.3626 \]
+\[ \hat{y} = \tanh(0.3626) = 0.3475 \]
+
+\subsubsection*{5. Nuevo Error}
+\[ E = (1.0 - 0.3475)^2 = 0.4257 \]
+
+---
+
+\section*{ÉPOCA 3}
+
+\subsubsection*{3. Modificar los Pesos}
+\textbf{3.1 Término de error ($\delta$):}
+\[ \delta = (1.0 - 0.3475)(1 - 0.3475^2) = (0.6525)(1 - 0.1208) \]
+\[ \delta = (0.6525)(0.8792) \approx 0.5667 \]
+
+\textbf{3.2 Calcular el incremento:}
+\[ \Delta w_{0} = 0.5 \cdot 0.5667 \cdot 0.5 = 0.1416 \]
+\[ \Delta w_{1} = 0.5 \cdot 0.5667 \cdot (-0.2) = -0.0566 \]
+
+\textbf{3.3 Actualizar Pesos:}
+\[ w_{0} = 0.7841 + 0.1416 = 0.9257 \]
+\[ w_{1} = 0.1468 + (-0.0566) = 0.0902 \]
+
+\subsubsection*{4. Estimar la Nueva Salida}
+\[ z = 0.9257(0.5) + 0.0902(-0.2) = 0.4448 \]
+\[ \hat{y} = \tanh(0.4448) = 0.4176 \]
+
+\subsubsection*{5. Nuevo Error Final}
+\[ E = (1.0 - 0.4176)^2 = 0.3391 \]
+
+\end{document}
