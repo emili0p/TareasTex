@@ -1,6 +1,6 @@
 *img/
 *.pdf
 
-*png/
-*jpg/
-*svg/
+*png
+*jpg
+*svg
