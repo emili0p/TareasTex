@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in} 
+\usepackage{adjustbox}
+
+\begin{document}
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{2.5}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|c|m{4.5cm}|m{4cm}|c|>{\centering\arraybackslash}m{3.5cm}|c|}
+\hline
+\textbf{ID Modelo} & \textbf{Arquitectura (Capas y Neuronas)} & \textbf{Hiperparámetros} & \textbf{MAE (Pérdida)} & \textbf{Gráficas} & \textbf{\% Error} \\ \hline
+Modelo 1 & 1 Capa Densa \newline (1 neurona, activación: linear) & Loss: MAE \newline Optimizador: SGD & 94009.51 & \adjustbox{valign=c,center}{\includegraphics[width=3cm,height=2.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/Tabla/modelo1.png}} & 99.99\% \\ \hline
+Modelo 2 & 1 Capa Densa \newline (1 neurona, activación: linear) & Loss: MAE \newline Optimizador: SGD \newline Épocas: 500 & 93904.66 & \adjustbox{valign=c,center}{\includegraphics[width=3cm,height=2.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/Tabla/modelo2.png}} & 99.88\% \\ \hline
+Modelo 3 & 2 Capas: \newline - Oculta: Densa (64, relu) \newline - Salida: Densa (1) & Loss: MAE \newline Optimizador: SGD \newline Épocas: 500 & 13541.27 & \adjustbox{valign=c,center}{\includegraphics[width=3cm,height=2.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/Tabla/modelo3.png}} & 14.40\% \\ \hline
+Modelo 4 & 3 Capas: \newline - Oculta 1: Densa (64, relu) \newline - Oculta 2: Densa (64, relu) \newline - Salida: Densa (1) & Loss: MAE \newline Optimizador: SGD \newline Épocas: 500 & 93990.96 & \adjustbox{valign=c,center}{\includegraphics[width=3cm,height=2.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/Tabla/modelo4.png}} & 99.97\% \\ \hline
+Modelo 5 & 3 Capas (Datos Normalizados): \newline - Oculta 1: Densa (64, relu) \newline - Oculta 2: Densa (64, relu) \newline - Salida: Densa (1) & Loss: MAE \newline Optimizador: SGD \newline Épocas: 1000 & 13321.56 & \adjustbox{valign=c,center}{\includegraphics[width=3cm,height=2.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/Tabla/modelo5.png}} & 14.17\% \\ \hline
+Modelo 6 & 3 Capas: \newline - Oculta 1: Densa (64, relu) \newline - Oculta 2: Densa (64, relu) \newline - Salida: Densa (1) & Loss: MAE \newline Optimizador: SGD \newline Épocas: 1000 \newline \textit{Early Stopping (paciencia=10)} & 66492.04 & \adjustbox{valign=c,center}{\includegraphics[width=3cm,height=2.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/Tabla/modelo6.png}} & 70.72\% \\ \hline
+Modelo 7 & 3 Capas: \newline - Oculta 1: Densa (64, relu) \newline - Oculta 2: Densa (64, relu) \newline - Salida: Densa (1) & Loss: MAE \newline Optimizador: Adam \newline Épocas: 1000 \newline \textit{Early Stopping} & 9.05 & \adjustbox{valign=c,center}{\includegraphics[width=3cm,height=2.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/Tabla/modelo7.png}} & 0.01\% \\ \hline
+Modelo 8 & 4 Capas: \newline - Oculta 1: Densa (64, relu) \newline - Oculta 2: Densa (64, relu) \newline - Oculta 3: Densa (64, relu) \newline - Salida: Densa (1) & Loss: MAE \newline Optimizador: Adam \newline Épocas: 1000 \newline \textit{Early Stopping} & 95.07 & \adjustbox{valign=c,center}{\includegraphics[width=3cm,height=2.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/Tabla/modelo8.png}} & 0.10\% \\ \hline
+\end{tabular}%
+}
+
+\vspace{0.3cm}
+\caption{Comparativa del rendimiento y arquitectura de los diferentes modelos entrenados con TensorFlow.}
+\label{tab:comparativa_modelos}
+\end{table}
+
+\end{document}
