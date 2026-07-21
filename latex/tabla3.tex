@@ -1,0 +1,93 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\geometry{a4paper, landscape, margin=1.2cm}
+
+\usepackage{adjustbox}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{longtable}
+
+\begin{document}
+
+\small
+\renewcommand{\arraystretch}{1.4}
+
+\begin{longtable}{|
+>{\centering\arraybackslash}p{1.2cm}|
+>{\raggedright\arraybackslash}p{2.8cm}|
+>{\centering\arraybackslash}p{1.5cm}|
+>{\centering\arraybackslash}p{1.8cm}|
+>{\centering\arraybackslash}p{1.4cm}|
+>{\centering\arraybackslash}p{1.4cm}|
+>{\centering\arraybackslash}p{1.6cm}|
+>{\centering\arraybackslash}p{1.6cm}|
+>{\centering\arraybackslash}p{1.4cm}|
+>{\centering\arraybackslash}p{3.8cm}|
+}
+\caption{Comparativa del rendimiento y arquitectura de los diferentes modelos entrenados usando el data aumenting con TensorFlow.}
+\label{tab:comparativa_modelos} \\
+
+\hline
+\textbf{Model ID} &
+\textbf{Architecture} &
+\textbf{Activation} &
+\textbf{Parameters} &
+\textbf{Optimizer} &
+\textbf{Epochs} &
+\textbf{Loss} &
+\textbf{Accuracy} &
+\textbf{Time} &
+\textbf{Accuracy Plot y loss plot} \\
+\hline
+\endfirsthead
+
+\multicolumn{10}{c}%
+{{\bfseries Tabla \thetable{} -- Continuación de la comparativa de modelos}} \\
+\hline
+\textbf{Model ID} &
+\textbf{Architecture} &
+\textbf{Activation} &
+\textbf{Parameters} &
+\textbf{Optimizer} &
+\textbf{Epochs} &
+\textbf{Loss} &
+\textbf{Accuracy} &
+\textbf{Time} &
+\textbf{Accuracy Plot y loss plot} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{10}{r}{{Continúa en la siguiente página}} \\
+\endfoot
+
+\hline
+\endlastfoot
+
+% Filas de la tabla
+Modelo 1 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050) $\rightarrow$ Dense(4) & ReLU / Softmax & 45,456,038 & Adam & 20/20 & 0.003 & 100\% & 7:24 &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla3/modelo1_acc.png}} \\
+\hline
+Modelo 2 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050) $\rightarrow$ Dense(4) & ReLU / Softmax & 45,456,038 & Adam & 8/20 (early stopping) & 0.12  & 95\% & 2:55 &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla3/modelo2_acc.png}} \\
+\hline
+Modelo 3 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(500) $\rightarrow$ Dense(4) & ReLU / Softmax & 21,658,088 & Adam & 5/20 (early stopping) & 0.5 & 83.3\% & 1:30 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla3/modelo3_acc.png}} \\
+\hline
+Modelo 4 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050, L1=0.01) $\rightarrow$ Dense(4) & ReLU / Softmax & 45,456,038 & Adam & 8/20 (early stopping) & 63.4 & 70\% & 3:16 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla3/modelo4_acc.png}} \\
+\hline
+Modelo 5 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050, L2=0.01) $\rightarrow$ Dense(4) & ReLU / Softmax & 45,456,038 & Adam & 8/20 (early stopping) & 80  & 81\% & 3:15 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla3/modelo5_acc.png}} \\
+\hline
+Modelo 6 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050, L2=0.01) $\rightarrow$ Dropout(0.6) $\rightarrow$ Dense(4) & ReLU / Softmax & 45,456,038 & Adam & 13/20 (early stopping) & 0.64 & 91\% & 5:48 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla3/modelo6_acc.png}} \\
+\hline
+Modelo 7 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050, L2=0.01) $\rightarrow$ Dropout(0.6) $\rightarrow$ Dense(4) & ReLU / Softmax & 45,456,038 & Adam & 10/20 (early stopping) & 0.70 & 90.0\% & 4:11 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla3/modelo7_acc.png}} \\
+\hline
+Modelo 8 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050) $\rightarrow$ Dense(4) & ReLU / Softmax & 45,456,038 & Adam (lr=0.0001) & 9/20 (early stopping) & 0.16 & 95\% & 4:"7 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla3/modelo8_acc.png}} \\
+\hline
+
+\end{longtable}
+
+\end{document}
