@@ -71,13 +71,13 @@
 \endlastfoot
 
 % Filas de la tabla
-Modelo 1 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 45,452,885 & Adam & 8/20 (early stopping) & 1.7863 & 73.56\% & 9:09 &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/memoriaia/tabla4/modelo1_plot.png}} \\
+Modelo 1 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 45,452,885 & Adam & 8/20 (early stopping) & 1.7863 & 73.56\% & 24:09 &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla4/modelo1_plot.png}} \\
 \hline
-Modelo 2 & VGG16 (preentrenado) $\rightarrow$ Flatten \newline Dense(1024) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 40,406,849 & Adam & 4/20 (early stopping) & 0.4741 & 85.90\% & 22:20 &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{modelo2_plot.png}} \\
+Modelo 2 & VGG16 (preentrenado) $\rightarrow$ Flatten \newline Dense(1024) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 40,406,849 & Adam & 4/20 (early stopping) & 0.4741 & 85.90\% & 22:20 &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla4/modelo2_plot.png}} \\
 \hline
-Modelo 3 & MobileNet (preentrenado) $\rightarrow$ Flatten \newline Dense(1024) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 54,611,137 & Adam & 7/20 (early stopping) & 4.1417 & 81.89\% & 10:37 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{modelo3_plot.png}} \\
+Modelo 3 & MobileNet (preentrenado) $\rightarrow$ Flatten \newline Dense(1024) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 54,611,137 & Adam & 7/20 (early stopping) & 4.1417 & 81.89\% & 16:37 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla4/modelo3_plot.png}} \\
 \hline
-Modelo 4 & InceptionV3 (preentrenado, fine-tuning) $\rightarrow$ Flatten \newline Dense(1024) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 222,632,037 & Adam & 5/20 (early stopping) & 0.4481 & 89.90\% & 28:08 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{modelo4_plot.png}} \\
+Modelo 4 & InceptionV3 (preentrenado, fine-tuning) $\rightarrow$ Flatten \newline Dense(1024) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 222,632,037 & Adam & 5/20 (early stopping) & 0.4481 & 89.90\% & 32:08 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla4/modelo4_plot.png}} \\
 \hline
 
 \end{longtable}
