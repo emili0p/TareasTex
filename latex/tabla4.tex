@@ -1,0 +1,85 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\geometry{a4paper, landscape, margin=1.2cm}
+
+\usepackage{adjustbox}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{longtable}
+
+\begin{document}
+
+\small
+\renewcommand{\arraystretch}{1.4}
+
+\begin{longtable}{|
+>{\centering\arraybackslash}p{1.2cm}|
+>{\raggedright\arraybackslash}p{2.8cm}|
+>{\centering\arraybackslash}p{1.5cm}|
+>{\centering\arraybackslash}p{1.8cm}|
+>{\centering\arraybackslash}p{1.4cm}|
+>{\centering\arraybackslash}p{1.4cm}|
+>{\centering\arraybackslash}p{1.6cm}|
+>{\centering\arraybackslash}p{1.6cm}|
+>{\centering\arraybackslash}p{1.4cm}|
+>{\centering\arraybackslash}p{3.8cm}|
+}
+\caption{Comparativa del rendimiento y arquitectura de los diferentes modelos entrenados para clasificación de neumonía.}
+\label{tab:comparativa_modelos} \\
+
+\hline
+\textbf{Model ID} &
+\textbf{Architecture} &
+\textbf{Activation} &
+\textbf{Parameters} &
+\textbf{Optimizer} &
+\textbf{Epochs} &
+\textbf{Loss} &
+\textbf{Accuracy} &
+\textbf{Time} &
+\textbf{Accuracy Plot y loss plot} \\
+\hline
+\endfirsthead
+
+\multicolumn{10}{c}%
+{{\bfseries Tabla \thetable{} -- Continuación de la comparativa de modelos}} \\
+\hline
+\textbf{Model ID} &
+\textbf{Architecture} &
+\textbf{Activation} &
+\textbf{Parameters} &
+\textbf{Optimizer} &
+\textbf{Epochs} &
+\textbf{Loss} &
+\textbf{Accuracy} &
+\textbf{Time} &
+\textbf{Accuracy Plot y loss plot} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{10}{r}{{Continúa en la siguiente página}} \\
+\endfoot
+
+\hline
+\endlastfoot
+
+% Filas de la tabla
+Modelo 1 & Conv2D(16) $\rightarrow$ MaxPool2D \newline Conv2D(32) $\rightarrow$ MaxPool2D \newline Conv2D(64) $\rightarrow$ MaxPool2D \newline Flatten $\rightarrow$ Dense(1050) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 45,452,885 & Adam & 8/20 (early stopping) & 1.7863 & 73.56\% & 9:09 &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/memoriaia/tabla4/modelo1_plot.png}} \\
+\hline
+Modelo 2 & VGG16 (preentrenado) $\rightarrow$ Flatten \newline Dense(1024) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 40,406,849 & Adam & 4/20 (early stopping) & 0.4741 & 85.90\% & 22:20 &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{modelo2_plot.png}} \\
+\hline
+Modelo 3 & MobileNet (preentrenado) $\rightarrow$ Flatten \newline Dense(1024) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 54,611,137 & Adam & 7/20 (early stopping) & 4.1417 & 81.89\% & 10:37 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{modelo3_plot.png}} \\
+\hline
+Modelo 4 & InceptionV3 (preentrenado, fine-tuning) $\rightarrow$ Flatten \newline Dense(1024) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1) & ReLU / Sigmoid & 222,632,037 & Adam & 5/20 (early stopping) & 0.4481 & 89.90\% & 28:08 & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{modelo4_plot.png}} \\
+\hline
+
+\end{longtable}
+
+\end{document}
