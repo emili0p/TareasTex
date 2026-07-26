@@ -71,15 +71,15 @@
 \endlastfoot
 
 % Filas de la tabla
-Modelo 1 & Embedding(VOCAB\_SIZE, EMBEDDING\_DIM, input\_length=MAX\_LENGTH) $\rightarrow$ GlobalAveragePooling1D \newline Dense(24, ReLU) $\rightarrow$ Dense(1, Sigmoid) & ReLU / Sigmoid & 481,301 & Adam & 9/10 (early stopping) & 0.28 & 89 \% & 12.9s &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla5/modelo1_plot.png}} \\
+Modelo 1 & Embedding $\rightarrow$ GlobalAveragePooling1D \newline Dense(24, ReLU) $\rightarrow$ Dense(1, Sigmoid) & ReLU / Sigmoid & 481,301 & Adam & 9/10 (early stopping) & 0.28 & 89 \% & 12.9s &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla5/modelo1_plot.png}} \\
 \hline
-Modelo 2 & Embedding(VOCAB\_SIZE, EMBEDDING\_DIM) $\rightarrow$ GlobalAveragePooling1D \newline Dense(24, ReLU) $\rightarrow$ Dense(1, Sigmoid) & ReLU / Sigmoid & 961,301 & Adam & 3/10 (early stopping) & 0.28 & 88\% & 17.3s &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla5/modelo2_plot.png}} \\
+Modelo 2 & Embedding $\rightarrow$ GlobalAveragePooling1D \newline Dense(24, ReLU) $\rightarrow$ Dense(1, Sigmoid) & ReLU / Sigmoid & 961,301 & Adam & 3/10 (early stopping) & 0.28 & 88\% & 17.3s &  \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla5/modelo2_plot.png}} \\
 \hline
 Modelo 3 & Embedding(10000, 32) $\rightarrow$ GlobalAveragePooling1D \newline Dense(24, ReLU) $\rightarrow$ Dense(1, Sigmoid) & ReLU / Sigmoid & 962,302 & Adam & 3/10 (early stopping) & 0.37 & 82\% & 46.4s & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla5/modelo3_plot.png}} \\
 \hline
-Modelo 4 & Embedding(VOCAB\_SIZE, EMBEDDING\_DIM) $\rightarrow$ GlobalAveragePooling1D \newline Dense(24, ReLU) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1, Sigmoid) & DROPOUT & 160,443 & Adam & 3/10 (early stopping) & 0.4755 & 78\% & 7.8s & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla5/modelo4_plot.png}} \\
+Modelo 4 & Embedding $\rightarrow$ GlobalAveragePooling1D \newline Dense(24, ReLU) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1, Sigmoid) & DROPOUT & 160,443 & Adam & 3/10 (early stopping) & 0.4755 & 78\% & 7.8s & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla5/modelo4_plot.png}} \\
 \hline
-Modelo 5 & Embedding(VOCAB\_SIZE, EMBEDDING\_DIM) $\rightarrow$ GlobalAveragePooling1D \newline Dense(24, ReLU) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1, Sigmoid) & DROPOUT & 160,433 & RMSPROP & 3/10 (early stopping) & 0.65 & 67\% & 8.6s & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla5/modelo5_plot.png}} \\
+Modelo 5 & Embedding $\rightarrow$ GlobalAveragePooling1D \newline Dense(24, ReLU) $\rightarrow$ Dropout(0.5) $\rightarrow$ Dense(1, Sigmoid) & DROPOUT & 160,433 & RMSPROP & 3/10 (early stopping) & 0.65 & 67\% & 8.6s & \adjustbox{valign=c,center}{\includegraphics[width=3.5cm,keepaspectratio]{/home/emilio/Imágenes/memoriaia/tabla5/modelo5_plot.png}} \\
 \hline
 
 
