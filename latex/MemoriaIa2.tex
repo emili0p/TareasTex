@@ -7,10 +7,24 @@
 \usepackage{setspace}
 \usepackage{titlesec}
 \usepackage{hyperref}
-
+\usepackage{amsmath}
 \geometry{margin=1in}
 \onehalfspacing
+\usepackage{listings}
+\usepackage{xcolor}
 
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny,
+    frame=single,
+    breaklines=true,
+    showstringspaces=false
+}
 \begin{document}
 
 \begin{titlepage}
@@ -124,24 +138,660 @@ pip list
     \caption{Paquetes de pip}
 \end{figure}
 
-\subsection{Actividad 2: Perceptrones NADN, AND OR}
+\subsection{Actividad 2: Perceptrones NADN, AND y OR}
 
-Vemos que con modelos neuronales sencilos podemos crear perceptones que tomen decisicones como las computadoras usando compuertas logicas como XOR AND 
+En esta actividad se observó que, mediante modelos neuronales sencillos como el perceptrón, es posible implementar funciones de decisión equivalentes a las compuertas lógicas utilizadas en los sistemas digitales. 
+En particular, se trabajó con las compuertas \texttt{NAND}, \texttt{AND} y \texttt{OR}, demostrando cómo un perceptrón puede aprender a representar estas operaciones lógicas a partir de ejemplos de entrenamiento.
+Siendo este el codigo para una nuerona \texttt{AND}
+\begin{verbatim}
+x_train = [
+    (1.0, -1.0, -1.0),
+    (1.0, -1.0, 1.0),
+    (1.0, 1.0, -1.0),
+    (1.0, 1.0, 1.0),
+]
+\end{verbatim}
 
 
-\subsection{Actividad 3: Perceptrone XOR}
+Al final la visualizacion de como las neuronas buscaban el valor correcto era asi
 
-\subsection{Actividad 4: Iris Dataser perceptron}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\linewidth]{/home/emilio/Imágenes/memoriaia/perceptroand.png}
+    \caption{Perceptron AND}
+\end{figure}
 
-\subsection{Actividad 5: Gradiente Descendiente y perceptrones}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\linewidth]{/home/emilio/Imágenes/memoriaia/perceptronand.png}
+    \caption{Perceptron NAND}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\linewidth]{/home/emilio/Imágenes/memoriaia/perceptronor.png}
+    \caption{Perceptron AND}
+\end{figure}
+
+
+\subsection{Actividad 3: Perceptrón XOR}
+
+A diferencia de las compuertas \texttt{AND}, \texttt{OR} y \texttt{NAND}, la compuerta \texttt{XOR} no es linealmente separable, por lo que no puede ser implementada mediante un único perceptrón. Para resolver este problema es necesario combinar varios perceptrones en una pequeña red neuronal.
+
+En esta actividad se utilizaron tres perceptrones. Los dos primeros fueron entrenados para representar las compuertas \texttt{OR} y \texttt{NAND}. Posteriormente, las salidas de estos perceptrones se emplearon como entradas de un tercer perceptrón configurado como una compuerta \texttt{AND}. De esta manera se implementa la siguiente identidad lógica:
+
+\[
+\texttt{XOR}(A,B)=\text{AND}(\texttt{OR}(A,B),\texttt{NAND}(A,B))
+\]
+El procedimiento consiste en evaluar primero las entradas mediante los perceptrones \texttt{OR} y \texttt{NAND}. Las salidas obtenidas son utilizadas como entradas del perceptrón \texttt{AND}, el cual genera el resultado final correspondiente a la compuerta \texttt{XOR}. Esta arquitectura demuestra cómo la combinación de perceptrones permite resolver problemas que un único perceptrón no puede representar debido a la naturaleza no linealmente separable de la función.
+
+\subsection{Actividad 4: Clasificación del conjunto de datos Iris}
+
+En esta actividad se desarrolló un modelo de clasificación supervisada utilizando una red neuronal para resolver el problema de identificación de especies de flores del conjunto de datos \textit{Iris}. Este conjunto de datos es uno de los más utilizados en el área del aprendizaje automático debido a que constituye un problema de clasificación multiclase relativamente sencillo, lo que permite comprender el funcionamiento de las redes neuronales y evaluar su capacidad para aprender patrones presentes en los datos.
+
+El conjunto de datos Iris está conformado por 150 muestras pertenecientes a tres especies de flores: \textit{Iris setosa}, \textit{Iris versicolor} e \textit{Iris virginica}. Cada muestra está descrita mediante cuatro características numéricas: longitud del sépalo, ancho del sépalo, longitud del pétalo y ancho del pétalo. A partir de estas características, el objetivo del modelo consiste en determinar correctamente la especie a la que pertenece cada flor.
+
+Para la implementación del modelo fue necesario realizar una etapa de preprocesamiento de los datos. En esta fase se cargó el conjunto de datos, se separaron las variables de entrada y la variable objetivo, y posteriormente se dividió la información en conjuntos de entrenamiento y prueba. Este procedimiento permite entrenar la red neuronal con una parte de los datos y evaluar su capacidad de generalización utilizando información que no fue observada durante el entrenamiento.
+
+Posteriormente, se diseñó una red neuronal de tipo \textit{feedforward}, conformada por una capa de entrada que recibe las cuatro características del conjunto de datos, una o más capas ocultas encargadas de extraer relaciones no lineales entre las variables y una capa de salida responsable de realizar la clasificación entre las tres especies de flores. Durante el entrenamiento, la red ajusta iterativamente sus pesos mediante el algoritmo de retropropagación del error (\textit{Backpropagation}) y un optimizador basado en descenso del gradiente, minimizando la función de pérdida hasta obtener una clasificación con la mayor precisión posible.
+
+Finalmente, una vez concluido el entrenamiento, el modelo fue evaluado utilizando el conjunto de prueba con el propósito de medir su desempeño. Los resultados obtenidos permiten analizar la capacidad de la red neuronal para reconocer patrones presentes en el conjunto de datos y clasificar correctamente nuevas muestras, demostrando la aplicación práctica de las redes neuronales artificiales en problemas de clasificación supervisada.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\linewidth]{/home/emilio/Imágenes/memoriaia/evolucioniris.jpeg}
+    \caption{Evolucion Del error IRIS}
+\end{figure}
+
+
+\subsection{Actividad 5: Actualización manual de los pesos de un perceptrón}
+
+En esta actividad se realizó el cálculo manual de la salida de un perceptrón y la actualización de sus pesos utilizando la regla de aprendizaje del perceptrón. El objetivo fue comprender el funcionamiento interno del algoritmo antes de implementarlo mediante programación.
+
+Se parte de los siguientes valores iniciales:
+
+\[
+x_0 = 1,\qquad x_1 = -1.5,\qquad x_2 = 0
+\]
+
+\[
+w_0 = -0.5,\qquad
+w_1 = 1,\qquad
+w_2 = -1
+\]
+
+con una salida esperada
+
+\[
+y = 1.
+\]
+
+En primer lugar, se calcula la entrada neta del perceptrón:
+
+\[
+z = w_0x_0 + w_1x_1 + w_2x_2
+\]
+
+Sustituyendo los valores:
+
+\[
+z = (-0.5)(1) + (1)(-1.5) + (-1)(0)
+\]
+
+\[
+z = -0.5 -1.5 = -2
+\]
+
+Aplicando la función de activación escalón:
+
+\[
+f(z)=f(-2)=-1
+\]
+
+Como la salida obtenida es diferente de la salida esperada, es necesario actualizar los pesos utilizando la regla de aprendizaje:
+
+\[
+\Delta w_i = \eta\,y\,x_i
+\]
+
+donde la tasa de aprendizaje es
+
+\[
+\eta = 2.
+\]
+
+Los incrementos calculados son:
+
+\[
+\Delta w_0 = 2(1)(1)=2
+\]
+
+\[
+\Delta w_1 = 2(1)(-1.5)=-3
+\]
+
+\[
+\Delta w_2 = 2(1)(0)=0
+\]
+
+Los nuevos pesos quedan definidos como:
+
+\[
+w_0=-0.5+2=1.5
+\]
+
+\[
+w_1=1-3=-2
+\]
+
+\[
+w_2=-1+0=-1
+\]
+
+Finalmente, se verifica nuevamente la salida utilizando los pesos actualizados:
+
+\[
+z=(1.5)(1)+(-2)(-1.5)+(-1)(0)
+\]
+
+\[
+z=1.5+3=4.5
+\]
+
+Por lo tanto,
+
+\[
+f(z)=f(4.5)=1,
+\]
+
+obteniéndose ahora la salida esperada. Esto demuestra que, después de una iteración de aprendizaje, el perceptrón corrige sus pesos para clasificar correctamente el patrón de entrada.
+
 \subsection{Actividad 6: Gradiente Descendiente y una red neuronal artificial}
+\subsubsection*{Parámetros Iniciales del Problema}
+Basado en el ejercicio numérico del video, definimos las siguientes condiciones y variables del sistema:
+\begin{itemize}
+    \item \textbf{Entradas:} $x_1 = 2$, $x_2 = 1$
+    \item \textbf{Pesos iniciales (Época 1):} $w_1 = -0.5$, $w_2 = 0.5$
+    \item \textbf{Sesgo (Bias):} $b = 0$
+    \item \textbf{Valor esperado (Target):} $y = 0.6$
+    \item \textbf{Tasa de aprendizaje (Learning rate):} $\eta = 0.4$
+    \item \textbf{Función de activación:} Sigmoide $\sigma(h) = \frac{1}{1 + e^{-h}}$
+\end{itemize}
 
-\subsection{Actividad 6: Gradiente Descendiente y una red neuronal artificial}
+\subsubsection*{Fórmulas Utilizadas}
+\begin{enumerate}
+    \item \textbf{Suma neta:} $h = w_1x_1 + w_2x_2 + b$
+    \item \textbf{Salida predicha:} $\hat{y} = \sigma(h) = \frac{1}{1 + e^{-h}}$
+    \item \textbf{Error residual simple:} $e_{residual} = y - \hat{y}$
+    \item \textbf{Error cuadrático (Loss):} $E = (y - \hat{y})^2$
+    \item \textbf{Término de error del gradiente:} $\delta = (y - \hat{y}) \cdot \hat{y} \cdot (1 - \hat{y})$
+    \item \textbf{Incremento de pesos:} $\Delta w_i = \eta \cdot \delta \cdot x_i$
+    \item \textbf{Actualización de pesos:} $w_i^{nuevo} = w_i + \Delta w_i$
+\end{enumerate}
+
+\subsubsection*{Desarrollo de las Épocas}
+
+\paragraph{Época 1}
+\begin{itemize}
+    \item \textbf{Forward Pass:}
+    \[ h = (-0.5 \times 2) + (0.5 \times 1) = -1.0 + 0.5 = -0.5 \]
+    \[ \hat{y} = \sigma(-0.5) = 0.377 \]
+    \item \textbf{Cálculo de Errores:}
+    \[ e_{residual} = 0.6 - 0.377 = 0.223 \]
+    \[ E = (0.223)^2 = 0.049 \]
+    \item \textbf{Gradiente y Actualización:}
+    \[ \delta = 0.223 \times 0.377 \times (1 - 0.377) = 0.052 \]
+    \[ \Delta w_1 = 0.4 \times 0.052 \times 2 = 0.041 \implies w_1^{nuevo} = -0.5 + 0.041 = -0.459 \]
+    \[ \Delta w_2 = 0.4 \times 0.052 \times 1 = 0.020 \implies w_2^{nuevo} = 0.5 + 0.020 = 0.520 \]
+\end{itemize}
+
+\paragraph{Época 2}
+\begin{itemize}
+    \item \textbf{Forward Pass:}
+    \[ h = (-0.459 \times 2) + (0.520 \times 1) = -0.918 + 0.520 = -0.398 \]
+    \[ \hat{y} = \sigma(-0.398) = 0.401 \]
+    \item \textbf{Cálculo de Errores:}
+    \[ e_{residual} = 0.6 - 0.401 = 0.199 \]
+    \[ E = (0.199)^2 = 0.0396 \]
+    \item \textbf{Gradiente y Actualización:}
+    \[ \delta = 0.199 \times 0.401 \times (1 - 0.401) = 0.0478 \]
+    \[ \Delta w_1 = 0.4 \times 0.0478 \times 2 = 0.0382 \implies w_1^{nuevo} = -0.459 + 0.0382 = -0.421 \]
+    \[ \Delta w_2 = 0.4 \times 0.0478 \times 1 = 0.0191 \implies w_2^{nuevo} = 0.520 + 0.0191 = 0.539 \]
+\end{itemize}
+
+\paragraph{Época 3}
+\begin{itemize}
+    \item \textbf{Forward Pass:}
+    \[ h = (-0.421 \times 2) + (0.539 \times 1) = -0.842 + 0.539 = -0.303 \]
+    \[ \hat{y} = \sigma(-0.303) = 0.425 \]
+    \item \textbf{Cálculo de Errores:}
+    \[ e_{residual} = 0.6 - 0.425 = 0.175 \]
+    \[ E = (0.175)^2 = 0.0306 \]
+    \item \textbf{Gradiente y Actualización:}
+    \[ \delta = 0.175 \times 0.425 \times (1 - 0.425) = 0.0428 \]
+    \[ \Delta w_1 = 0.4 \times 0.0428 \times 2 = 0.0342 \implies w_1^{nuevo} = -0.421 + 0.0342 = -0.387 \]
+    \[ \Delta w_2 = 0.4 \times 0.0428 \times 1 = 0.0171 \implies w_2^{nuevo} = 0.539 + 0.0171 = 0.556 \]
+\end{itemize}
+
+\subsubsection*{Respuestas del Cuestionario}
+
+\paragraph{¿Cuál fue el Error Residual en la Época 1, 2 y 3?}
+El comportamiento del error residual simple disminuyó consistentemente y considerablemente en cada iteración:
+\begin{itemize}
+    \item \textbf{Época 1:} $0.223$
+    \item \textbf{Época 2:} $0.199$
+    \item \textbf{Época 3:} $0.175$
+\end{itemize}
+
+\paragraph{¿Cómo se comportó la salida predicha ($\hat{y}$) en cada época? ¿La red está aprendiendo?}
+La salida predicha evolucionó de la siguiente manera:
+\begin{itemize}
+    \item \textbf{Época 1:} $\hat{y} = 0.377$
+    \item \textbf{Época 2:} $\hat{y} = 0.401$
+    \item \textbf{Época 3:} $\hat{y} = 0.425$
+\end{itemize}
+\textbf{Conclusión:} \textbf{Sí, está aprendiendo.} Dado que nuestro target es $y = 0.6$, el incremento progresivo de $\hat{y}$ hacia ese valor demuestra que el algoritmo de optimización está minimizando la función de costo.
+
+\paragraph{¿Cómo se comportaron los pesos $w_i$ en cada época?}
+Los pesos se reajustaron dinámicamente según la magnitud de sus entradas:
+\begin{itemize}
+    \item El peso \textbf{$w_1$} (asociado a $x_1 = 2$) aumentó su valor desde $-0.5$ hasta $-0.387$, aproximándose hacia el cero.
+    \item El peso \textbf{$w_2$} (asociado a $x_2 = 1$) se incrementó positivamente de manera constante, pasando de $0.5$ a $0.556$.
+\end{itemize}
+Ambos pesos cambiaron en la dirección opuesta al gradiente.
+
 \subsection{Actividad 7: Forward Pass y BackPropagation en Red Neuronal Artificial}
-\subsection{Actividad 8: Celebrities Dataset TensorFlow}
-\subsection{Actividad 9: Regresion lineal y clasificación con keras}
-\subsection{Actividad 10: Salaru prediction con TensorFlow}
+
+La tangente hiperbólica ($\tanh$) es una función de activación utilizada en redes neuronales que mapea los valores de entrada al intervalo $(-1,1)$. Su principal ventaja respecto a la sigmoide es que está centrada en cero, lo que facilita la convergencia del gradiente en capas profundas. Su derivada $f'(z)=1-f(z)^2$ permite calcular el gradiente del error durante el proceso de retropropagación. A continuación se presenta un ejercicio numérico que aplica el algoritmo de gradiente descendente con una neurona con activación $\tanh$.
+
+\paragraph{Datos Iniciales}
+\begin{itemize}
+    \item Entradas: $x_{1} = 0.5$, $x_{2} = -0.2$
+    \item Pesos iniciales: $w_{0} = 0.4$, $w_{1} = 0.3$
+    \item Tasa de aprendizaje ($\eta$): $0.5$
+    \item Valor objetivo ($y$): $1.0$
+    \item Función de activación (Tangente Hiperbólica): 
+    \[ f(z) = \tanh(z) = \frac{e^{z}-e^{-z}}{e^{z}+e^{-z}} \]
+    \item Derivada de $\tanh$: $f'(z) = 1 - f^2$
+\end{itemize}
+
+\paragraph{Demostración de la Derivada}
+Utilizando la regla del cociente $\left(\frac{u}{v}\right)' = \frac{u'v - uv'}{v^2}$:
+\[ \frac{d}{dz}\left[\frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}\right] = \frac{(e^{z}+e^{-z})(e^{z}+e^{-z}) - (e^{z}-e^{-z})(e^{z}-e^{-z})}{(e^{z}+e^{-z})^2} \]
+\[ = \frac{(e^{z}+e^{-z})^2 - (e^{z}-e^{-z})^2}{(e^{z}+e^{-z})^2} = 1 - \frac{(e^{z}-e^{-z})^2}{(e^{z}+e^{-z})^2} = 1 - f^2 \]
+
+\paragraph{Época 1}
+
+\subparagraph{1. Calcular Salida / Forward Pass}
+\[ z = w_{0}x_{1} + w_{1}x_{2} \]
+\[ z = (0.4)(0.5) + (0.3)(-0.2) = 0.2 + (-0.06) = 0.14 \]
+\[ \hat{y} = f(z) = \tanh(0.14) \Rightarrow 0.139 \]
+
+\subparagraph{2. Determinar el Error / LOSS}
+\[ E = (y - \hat{y})^2 = (1.0 - 0.139)^2 = 0.741 \]
+
+\subparagraph{3. Modificar los Pesos}
+\textbf{3.1 Término de error ($\delta$):}
+\[ \delta = (y - \hat{y}) \cdot f'(z) = (y - \hat{y})(1 - \hat{y}^2) \]
+\[ \delta = (1.0 - 0.139)(1 - 0.139^2) = (0.861)(1 - 0.019) \]
+\[ \delta = (0.861)(0.981) = 0.844 \]
+
+\textbf{3.2 Calcular el incremento ($\Delta w_i = \eta \cdot \delta \cdot x_i$):}
+\[ \Delta w_{0} = 0.5 \cdot 0.844 \cdot 0.5 = 0.211 \]
+\[ \Delta w_{1} = 0.5 \cdot 0.844 \cdot (-0.2) = -0.0844 \]
+
+\textbf{3.3 Actualizar Pesos ($w_i = w_i + \Delta w_i$):}
+\[ w_{0} = 0.4 + 0.211 = 0.611 \]
+\[ w_{1} = 0.3 + (-0.0844) = 0.216 \]
+
+\subparagraph{4. Estimar la Nueva Salida}
+\[ z = 0.611(0.5) + 0.216(-0.2) = 0.3055 - 0.0432 = 0.2623 \]
+\[ \hat{y} = \tanh(0.2623) = 0.2564 \]
+
+\subparagraph{5. Nuevo Error}
+\[ E = (1.0 - 0.2564)^2 = 0.5529 \]
+
+\paragraph{Época 2}
+
+\subparagraph{1. Calcular Salida / Forward Pass} (omitimos por brevedad, ya se calculó al final de la época anterior)
+
+\subparagraph{2. Modificar los Pesos}
+\textbf{2.1 Término de error ($\delta$):}
+\[ \delta = (1.0 - 0.2564)(1 - 0.2564^2) = (0.7436)(1 - 0.0658) \]
+\[ \delta = (0.7436)(0.9342) \approx 0.6924 \]
+
+\textbf{2.2 Calcular el incremento:}
+\[ \Delta w_{0} = 0.5 \cdot 0.6924 \cdot 0.5 = 0.1731 \]
+\[ \Delta w_{1} = 0.5 \cdot 0.6924 \cdot (-0.2) = -0.0692 \]
+
+\textbf{2.3 Actualizar Pesos:}
+\[ w_{0} = 0.611 + 0.1731 = 0.7841 \]
+\[ w_{1} = 0.216 + (-0.0692) = 0.1468 \]
+
+\subparagraph{3. Estimar la Nueva Salida}
+\[ z = 0.7841(0.5) + 0.1468(-0.2) = 0.3626 \]
+\[ \hat{y} = \tanh(0.3626) = 0.3475 \]
+
+\subparagraph{4. Nuevo Error}
+\[ E = (1.0 - 0.3475)^2 = 0.4257 \]
+
+\paragraph{Época 3}
+
+\subparagraph{1. Modificar los Pesos}
+\textbf{1.1 Término de error ($\delta$):}
+\[ \delta = (1.0 - 0.3475)(1 - 0.3475^2) = (0.6525)(1 - 0.1208) \]
+\[ \delta = (0.6525)(0.8792) \approx 0.5667 \]
+
+\textbf{1.2 Calcular el incremento:}
+\[ \Delta w_{0} = 0.5 \cdot 0.5667 \cdot 0.5 = 0.1416 \]
+\[ \Delta w_{1} = 0.5 \cdot 0.5667 \cdot (-0.2) = -0.0566 \]
+
+\textbf{1.3 Actualizar Pesos:}
+\[ w_{0} = 0.7841 + 0.1416 = 0.9257 \]
+\[ w_{1} = 0.1468 + (-0.0566) = 0.0902 \]
+
+\subparagraph{2. Estimar la Nueva Salida}
+\[ z = 0.9257(0.5) + 0.0902(-0.2) = 0.4448 \]
+\[ \hat{y} = \tanh(0.4448) = 0.4176 \]
+
+\subparagraph{3. Nuevo Error Final}
+\[ E = (1.0 - 0.4176)^2 = 0.3391 \]
+
+\subsection{Actividad 8: Carga y Visualización del Dataset CelebA con TensorFlow}
+
+En el ámbito del aprendizaje profundo, el manejo eficiente de grandes conjuntos de datos es fundamental. TensorFlow proporciona la librería \texttt{tensorflow\_datasets} (TFDS) que facilita la descarga, preparación y preprocesamiento de numerosos conjuntos de datos estándar. En esta actividad se utiliza el conjunto de datos \textit{CelebA} (Large-scale CelebFaces Attributes), que contiene más de 200\,000 imágenes de rostros de celebridades, cada una anotada con 40 atributos binarios (p. ej., \textit{sonrisa}, \textit{gafas}, \textit{género}, etc.). El objetivo es familiarizarse con la carga de datos mediante TFDS y la visualización de ejemplos junto con sus etiquetas.
+
+El siguiente código en Python realiza las siguientes tareas:
+\begin{enumerate}
+    \item Carga el conjunto de datos \texttt{celeb\_a} en modo entrenamiento.
+    \item Muestra el número total de ejemplos disponibles.
+    \item Muestra los nombres de todos los atributos.
+    \item Visualiza las primeras 5 imágenes con una selección de sus atributos activos.
+\end{enumerate}
+
+\subsubsection*{Código de la Actividad}
+
+\noindent Para ejecutarlo, asegúrate de tener instalados \texttt{tensorflow}, \texttt{tensorflow-datasets} y \texttt{matplotlib}. El código completo es:
+
+\begin{lstlisting}[language=Python, caption={Carga y visualización de CelebA con TFDS}, label={lst:celebA}]
+import tensorflow as tf
+import tensorflow_datasets as tfds
+import matplotlib.pyplot as plt
+
+dataset, info = tfds.load(
+    "celeb_a",
+    split="train",
+    with_info=True
+)
+
+print("Número de ejemplos:", info.splits["train"].num_examples)
+
+attribute_names = list(info.features["attributes"].keys())
+
+plt.figure(figsize=(15, 8))
+
+for i, example in enumerate(dataset.take(5)):
+    image = example["image"].numpy()
+    attributes = example["attributes"]
+
+    plt.subplot(1, 5, i + 1)
+    plt.imshow(image)
+    plt.axis("off")
+
+    active_attributes = [
+        name
+        for name in attribute_names
+        if attributes[name].numpy()
+    ]
+
+    plt.title("\n".join(active_attributes[:5]), fontsize=8)
+
+plt.tight_layout()
+plt.show()
+\end{lstlisting}
+
+\subsubsection*{Salida Esperada}
+
+Al ejecutar el código se obtiene:
+\begin{itemize}
+    \item Un mensaje con el número de ejemplos en el conjunto de entrenamiento (normalmente 162\,770).
+    \item Una ventana con una figura que muestra 5 imágenes de rostros, cada una con el título de hasta 5 atributos activos (por ejemplo, \textit{Smiling}, \textit{Young}, \textit{Male}, etc.), dependiendo de la imagen.
+\end{itemize}
+
+Este ejercicio sienta las bases para futuras actividades de entrenamiento de redes convolucionales (CNN) sobre datos de imágenes, donde se utilizarán estos atributos como etiquetas para tareas de clasificación múltiple.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{/home/emilio/Imágenes/memoriaia/celebridades.jpeg}
+    \caption{CelebIa predicciónes}
+\end{figure}
+
+\subsection{Actividad 9: Regresión Lineal con TensorFlow y Gradiente Descendente}
+
+La regresión lineal es uno de los modelos más fundamentales en aprendizaje automático. Su objetivo es encontrar una relación lineal entre una variable de entrada $x$ y una variable de salida $y$, de forma que se pueda predecir $y$ a partir de $x$ mediante la ecuación $\hat{y} = w x + b$, donde $w$ es la pendiente y $b$ la intersección (sesgo). El aprendizaje consiste en ajustar $w$ y $b$ para minimizar el error cuadrático medio entre las predicciones y los valores reales.
+
+En esta actividad se implementa manualmente el algoritmo de **gradiente descendente** para entrenar un modelo de regresión lineal utilizando TensorFlow. En lugar de usar la API de alto nivel (`keras`), se definen las variables manualmente y se calculan los gradientes con `tf.GradientTape`, lo que permite comprender en profundidad el mecanismo de optimización. Además, se realizan múltiples entrenamientos con diferentes inicializaciones e hiperparámetros para observar la robustez del método.
+
+\subsubsection*{Preparación de los Datos}
+
+Se generan datos sintéticos con una tendencia lineal aproximada, pero con cierta dispersión para simular ruido. Los valores de entrada $x$ son números del 0 al 9, y los valores de salida $y$ se definen manualmente para que sigan una tendencia creciente, con algunas desviaciones. Los datos se normalizan restando la media y dividiendo por la desviación típica, para facilitar la convergencia del gradiente descendente.
+
+A continuación se muestra el código de preparación de datos y de definición del modelo.
+
+\begin{lstlisting}[language=Python, caption={Preparación de datos y definición del modelo de regresión lineal}, label={lst:regresion1}]
+import tensorflow as tf
+import numpy as np 
+import matplotlib.pyplot as plt
+
+# Datos sintéticos
+x_train = np.arange(10).reshape((10,1))
+y_train = np.array([1.0, 1.3, 3.1, 2.0, 5.0, 6.3,
+                    6.6, 7.4, 8.0, 5.0])
+
+# Normalización
+x_train_norm = (x_train - np.mean(x_train))/np.std(x_train)
+
+# Creación de dataset de TensorFlow
+ds_train_orig = tf.data.Dataset.from_tensor_slices(
+    (tf.cast(x_train_norm, tf.float32),
+     tf.cast(y_train, tf.float32))
+)
+
+# Definición del modelo
+class Modelo(tf.keras.Model):
+    def __init__(self):
+        super(Modelo, self).__init__()
+        self.w = tf.Variable(0.0, name='pesos')
+        self.b = tf.Variable(0.0, name='bias')
+
+    def call(self, x):
+        return self.w * x + self.b
+
+# Función de pérdida (error cuadrático medio)
+def loss_fn(y_true, y_pred):
+    return tf.reduce_mean(tf.square(y_true - y_pred))
+
+# Función de entrenamiento (un paso de gradiente descendente)
+def train(model, inputs, outputs, learning_rate):
+    with tf.GradientTape() as tape:
+        predictions = model(inputs)
+        loss = loss_fn(outputs, predictions)
+    dW, dB = tape.gradient(loss, [model.w, model.b])
+    model.w.assign_sub(learning_rate * dW)
+    model.b.assign_sub(learning_rate * dB)
+    return loss
+\end{lstlisting}
+
+El modelo se define como una clase que hereda de `tf.keras.Model` y contiene dos variables entrenables: $w$ y $b$. La función `train` utiliza `GradientTape` para registrar las operaciones y calcular automáticamente los gradientes de la pérdida con respecto a los parámetros, actualizándolos mediante la regla del gradiente descendente.
+
+\subsubsection*{Entrenamiento y Resultados}
+
+Se ejecutan cinco entrenamientos independientes, cada uno con una inicialización aleatoria de los pesos (entre -5 y 5) y con una tasa de aprendizaje y número de épocas aleatorios. Esto permite observar cómo el algoritmo converge a soluciones similares a pesar de las diferentes condiciones iniciales. Durante cada entrenamiento se registran la evolución de los pesos, el sesgo y la pérdida.
+
+\begin{lstlisting}[language=Python, caption={Entrenamiento con múltiples inicializaciones}, label={lst:regresion2}]
+import random
+
+random.seed(8)
+tf.random.set_seed(1)
+
+resultados = []
+
+for j in range(5):
+    # Nuevo modelo e inicialización aleatoria
+    model = Modelo()
+    model.w.assign(random.uniform(-5, 5))
+    model.b.assign(random.uniform(-5, 5))
+
+    # Hiperparámetros aleatorios
+    learning_rate = random.uniform(0.0005, 0.01)
+    num_epochs = random.randint(150, 250)
+    batch_size = 1
+
+    steps_per_epoch = int(np.ceil(len(y_train) / batch_size))
+    ds = ds_train_orig.shuffle(buffer_size=len(y_train))
+    ds = ds.repeat(count=None)
+    ds = ds.batch(batch_size)
+
+    Ws, Bs, Losses = [], [], []
+
+    for i, batch in enumerate(ds):
+        if i >= steps_per_epoch * num_epochs:
+            break
+        Ws.append(model.w.numpy())
+        Bs.append(model.b.numpy())
+        bx, by = batch
+        loss_val = loss_fn(by, model(bx))
+        Losses.append(loss_val.numpy())
+        train(model, bx, by, learning_rate)
+
+        if i % 100 == 0:
+            print(f"Epoch {int(i/steps_per_epoch):4d} Step {i:4d} Loss {loss_val:.4f}")
+
+    resultados.append({
+        "modelo": model,
+        "Ws": Ws,
+        "Bs": Bs,
+        "Losses": Losses,
+        "lr": learning_rate,
+        "epochs": num_epochs
+    })
+    print(f"Parámetros finales -> w={model.w.numpy():.3f}, b={model.b.numpy():.3f}, lr={learning_rate:.5f}, epochs={num_epochs}")
+\end{lstlisting}
+
+Los resultados muestran que en todos los casos el modelo converge a valores de $w$ cercanos a 2.07 y $b$ cercanos a 4.56, lo que indica que la solución es estable y no depende en exceso de la inicialización. A continuación se presentan las gráficas generadas para cada uno de los cinco entrenamientos, donde se muestra la recta de regresión ajustada y la evolución de los parámetros a lo largo de las iteraciones.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{/home/emilio/Imágenes/memoriaia/regresionlinealiris.jpeg}
+    \caption{Ejemplo de ajuste de la recta de regresión y evolución de pesos.}
+    \label{fig:regresion1}
+\end{figure}
+
+(Las gráficas completas se incluyen en el anexo de figuras; aquí se muestra una representativa.)
+
+\subsubsection*{Análisis de los Resultados}
+
+Se observa que:
+
+\begin{itemize}
+    \item La pérdida disminuye de manera consistente a lo largo de las épocas, aunque presenta oscilaciones debido al uso de gradiente descendente estocástico con tamaño de lote 1.
+    \item Los pesos $w$ y $b$ convergen a valores estables que minimizan el error cuadrático medio.
+    \item La tasa de aprendizaje y el número de épocas varían entre ejecuciones, pero todas alcanzan una solución similar, lo que demuestra la robustez del algoritmo.
+    \item La recta de regresión resultante se ajusta razonablemente bien a los datos de entrenamiento, capturando la tendencia creciente.
+\end{itemize}
+
+Este ejercicio práctico permite comprender los fundamentos del gradiente descendente y su aplicación en un modelo lineal, sentando las bases para la comprensión de redes neuronales más complejas.
+\subsection{Actividad 10: Comparación de Modelos de Regresión con TensorFlow y Keras}
+
+En esta actividad se aborda un problema de regresión supervisada: predecir el salario de una persona a partir de un conjunto de características. Para ello, se utiliza un dataset de salarios que contiene variables numéricas (como años de experiencia) y categóricas (nombre, fecha de nacimiento, etc.). El objetivo es comparar el rendimiento de diferentes arquitecturas de redes neuronales y configuraciones de entrenamiento, evaluando su capacidad para generalizar y minimizar el error.
+
+El experimento consiste en entrenar ocho modelos distintos, variando el optimizador, la tasa de aprendizaje, el número de épocas, el tamaño de lote y la complejidad de la arquitectura (número de capas y neuronas). Todos los modelos se entrenan con el mismo conjunto de datos preprocesado y se evalúan mediante la métrica de error absoluto medio (MAE) y el error cuadrático medio (MSE).
+
+\subsubsection*{Preparación de los Datos}
+
+El conjunto de datos se carga desde un repositorio público y contiene variables como experiencia, salario, nombre y fecha de nacimiento. Tras eliminar valores nulos, se aplica codificación \textit{one-hot} a las variables categóricas, lo que aumenta significativamente el número de características (más de 700). A continuación, se separan las características ($X$) de la etiqueta objetivo ($y$), se divide en conjuntos de entrenamiento (80\,\%) y prueba (20\,\%) y se normalizan las características con \texttt{MinMaxScaler} para facilitar la convergencia del gradiente descendente.
+
+\begin{lstlisting}[language=Python, caption={Preparación de datos y división}, label={lst:prep_datos}]
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+
+tf.random.set_seed(9)
+np.random.seed(9)
+
+# Cargar dataset
+df = pd.read_csv("https://raw.githubusercontent.com/oluwole-packt/datasets/main/salary_dataset.csv")
+df = df.dropna()
+df = pd.get_dummies(df, drop_first=True)
+
+X = df.drop(columns=['Salary']).values
+y = df['Salary'].values
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+scaler = MinMaxScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+print(f"X_train: {X_train_scaled.shape}, y_train: {y_train.shape}")
+\end{lstlisting}
+
+\subsubsection*{Modelos Implementados}
+
+Se han diseñado ocho modelos con diferentes configuraciones para analizar el impacto de cada hiperparámetro en el rendimiento final. Todos los modelos utilizan la función de pérdida \texttt{mean\_squared\_error} y la métrica \texttt{mae}.
+
+\begin{enumerate}
+    \item \textbf{Modelo 1: SGD, 10 épocas}. Una capa densa con una neurona, optimizador SGD con tasa de aprendizaje 0.001 y 10 épocas (entrenamiento corto).
+    \item \textbf{Modelo 2: SGD, 100 épocas}. Misma arquitectura pero con 100 épocas para observar la evolución del error.
+    \item \textbf{Modelo 3: SGD con LR=0.01}. Mismo que el modelo 2 pero con una tasa de aprendizaje más alta para acelerar la convergencia.
+    \item \textbf{Modelo 4: Adam base}. Optimizador Adam con tasa 0.01, 100 épocas y batch\_size=1 (SGD estocástico).
+    \item \textbf{Modelo 5: Adam con batch\_size=4}. Mismo que el modelo 4 pero con lotes de tamaño 4 para suavizar las actualizaciones.
+    \item \textbf{Modelo 6: MLP con 1 capa oculta}. Se añade una capa oculta de 8 neuronas con activación ReLU.
+    \item \textbf{Modelo 7: MLP con 2 capas ocultas}. Arquitectura con capas de 16 y 8 neuronas (ReLU).
+    \item \textbf{Modelo 8: Red profunda óptima}. Tres capas ocultas con 32, 16 y 8 neuronas, y una tasa de aprendizaje de 0.005.
+\end{enumerate}
+
+Los fragmentos de código siguientes muestran la definición y entrenamiento de dos modelos representativos: el modelo lineal con SGD y el MLP profundo.
+
+\begin{lstlisting}[language=Python, caption={Modelo 2: SGD con 100 épocas}, label={lst:modelo2}]
+model_2 = Sequential([
+    Dense(units=1, input_shape=[X_train_scaled.shape[1]])
+])
+model_2.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=0.001),
+                loss='mean_squared_error', metrics=['mae'])
+history_2 = model_2.fit(X_train_scaled, y_train,
+                        validation_data=(X_test_scaled, y_test),
+                        epochs=100, batch_size=1, verbose=1)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Modelo 8: Red profunda}, label={lst:modelo8}]
+model_8 = Sequential([
+    Dense(units=32, activation='relu', input_shape=[X_train_scaled.shape[1]]),
+    Dense(units=16, activation='relu'),
+    Dense(units=8, activation='relu'),
+    Dense(units=1)
+])
+model_8.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.005),
+                loss='mean_squared_error', metrics=['mae'])
+history_8 = model_8.fit(X_train_scaled, y_train,
+                        validation_data=(X_test_scaled, y_test),
+                        epochs=200, batch_size=2, verbose=1)
+\end{lstlisting}
+
+\subsubsection*{Resultados y Análisis}
+
+Tras el entrenamiento, se generan dos gráficas comparativas: una con la evolución de la pérdida (MSE) en escala logarítmica y otra con el MAE en el conjunto de validación. Estas gráficas permiten evaluar la velocidad de convergencia, la estabilidad y el posible sobreajuste de cada modelo.
+La experimentación sistemática con diferentes configuraciones de redes neuronales permite identificar la combinación óptima de hiperparámetros y arquitectura para un problema dado. En este caso, la red profunda con tres capas ocultas y optimizador Adam con tasa de aprendizaje 0.005 supera claramente a los modelos lineales y a las redes más simples. Este enfoque de comparación es fundamental en el desarrollo de soluciones de aprendizaje automático, ya que permite justificar las decisiones de diseño y evaluar el compromiso entre complejidad y rendimiento.
+
 \subsection{Actividad 11: Resumen de modelos de entrenamiento tabla 1}
+
 \subsection{Actividad 12: entrenamiento de modelo optimizado y GUI}
 \subsection{Actividad 13: Clasificación binaria student drop out}
 \subsection{Actividad 14: Clasificación con dataset employees}
