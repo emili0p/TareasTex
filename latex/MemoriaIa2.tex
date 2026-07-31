@@ -12,7 +12,7 @@
 \onehalfspacing
 \usepackage{listings}
 \usepackage{xcolor}
-
+\usepackage{booktabs}
 \lstset{
     language=Python,
     basicstyle=\ttfamily\small,
@@ -76,7 +76,7 @@ predicción y reconocimiento de patrones.
 
 \newpage
 
-\section{Unidad 1}
+\section{Actividades realizadas}
 \subsection{¿Qué es TensorFlow?}
 
 TensorFlow es una biblioteca de código abierto especializada en aprendizaje automático e inteligencia artificial, desarrollada originalmente por la empresa Google, 
@@ -792,17 +792,823 @@ La experimentación sistemática con diferentes configuraciones de redes neurona
 
 \subsection{Actividad 11: Resumen de modelos de entrenamiento tabla 1}
 
+Se entrenaron ocho modelos de redes neuronales con distintas arquitecturas e hiperparámetros, con el objetivo de predecir el salario a partir de un conjunto de características (incluyendo variables categóricas codificadas con one-hot). La métrica principal de evaluación fue el error absoluto medio (MAE). A continuación se resumen los hallazgos más importantes.
+
+\subsubsection*{Resumen de Rendimiento}
+
+Los modelos lineales (1 y 2) con una única neurona y optimizador SGD presentaron un MAE superior a 93\,000, lo que indica que no logran capturar la complejidad de los datos. Al añadir capas ocultas (modelo 3), el error se reduce drásticamente a 13\,541 (≈14\% de error relativo). Sin embargo, el mejor rendimiento se obtiene con el optimizador Adam y técnicas de regularización como \textit{early stopping} (modelos 7 y 8), alcanzando errores del orden de 9 y 95 respectivamente. Destaca especialmente el modelo 7, que logra un MAE de 9.05 (≈0.01\% de error), superando ampliamente al resto.
+
+\begin{table}[htbp]
+\centering
+\caption{Resumen de los modelos más destacados.}
+\label{tab:resumen_modelos}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Modelo} & \textbf{Arquitectura} & \textbf{Optimizador} & \textbf{MAE} \\
+\midrule
+Modelo 1 & 1 capa (1 neurona) & SGD & 94009.51 \\
+Modelo 3 & 2 capas (64, relu) + salida & SGD & 13541.27 \\
+Modelo 5 & 3 capas (64, relu, 64) + salida & SGD & 13321.56 \\
+Modelo 7 & 3 capas (64, relu, 64) + salida & Adam + Early Stopping & \textbf{9.05} \\
+Modelo 8 & 4 capas (64, relu, 64, 64) + salida & Adam + Early Stopping & 95.07 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Análisis de Resultados}
+
+\begin{itemize}
+    \item \textbf{Importancia del optimizador}: Los modelos con SGD (1--6) muestran una convergencia lenta y errores elevados, incluso con más épocas. En cambio, Adam (modelos 7 y 8) acelera el aprendizaje y reduce drásticamente el error.
+    \item \textbf{Efecto de las capas ocultas}: Añadir una capa oculta (modelo 3) mejora significativamente el rendimiento frente al modelo lineal. Sin embargo, aumentar el número de capas no siempre garantiza una mejora; el modelo 7 (tres capas) supera al modelo 8 (cuatro capas), posiblemente por sobreajuste o por la complejidad innecesaria.
+    \item \textbf{Early stopping}: Esta técnica evitó el sobreajuste en los modelos 7 y 8, deteniendo el entrenamiento en el punto óptimo.
+    \item \textbf{Normalización}: Los modelos 5 y 6 incluyeron normalización de datos, pero el impacto fue menor comparado con el cambio de optimizador.
+\end{itemize}
+
+El modelo 7 (tres capas ocultas con 64 neuronas cada una, activación ReLU, optimizador Adam y early stopping) proporciona el mejor equilibrio entre precisión y complejidad, con un MAE de 9.05, muy cercano al error mínimo teórico. Este resultado subraya la importancia de elegir un optimizador adaptativo y de aplicar técnicas de regularización para problemas con alta dimensionalidad y datos complejos. Para futuros experimentos, se podría explorar la sintonización fina de la tasa de aprendizaje y el uso de \textit{batch normalization} para mejorar aún más la estabilidad.
+
 \subsection{Actividad 12: entrenamiento de modelo optimizado y GUI}
+
+Una vez entrenado y validado el modelo óptimo (Modelo 7), el siguiente paso fue integrarlo en una aplicación web funcional que permita a usuarios no técnicos realizar predicciones de salario de forma sencilla. Para ello, se desarrolló una interfaz gráfica (GUI) utilizando el microframework Flask de Python, que expone un formulario web y devuelve la estimación del salario en tiempo real.
+
+\subsubsection*{Arquitectura de la Aplicación}
+
+La aplicación consta de tres componentes principales:
+
+\begin{enumerate}
+    \item \textbf{Backend (Flask)}: Gestiona las peticiones HTTP, procesa los datos de entrada, aplica el preprocesamiento (codificación one-hot y normalización) y ejecuta el modelo para generar la predicción.
+    \item \textbf{Modelo y preprocesador}: Se carga el modelo entrenado (\texttt{salarypredictor.keras}) y el escalador (\texttt{scaler.pkl}) previamente guardados con \texttt{joblib}. Ambos se cargan al iniciar la aplicación para evitar recargas innecesarias.
+    \item \textbf{Frontend (HTML/CSS)}: Un formulario simple que recoge las variables de entrada (años de experiencia, edad, cualificación, universidad, rol y certificación) y muestra el resultado de la predicción.
+\end{enumerate}
+
+\subsubsection*{Flujo de la Predicción}
+
+Cuando el usuario envía el formulario, la ruta \texttt{/predict} recibe los datos mediante el método POST. A continuación, se construye un vector de características que incluye las variables numéricas (experiencia y edad) y las variables categóricas codificadas en one-hot (cualificación, universidad, rol, certificación). Este vector se normaliza con el escalador cargado y se pasa al modelo, que devuelve el salario estimado. Finalmente, el resultado se muestra en la misma página.
+
+El siguiente fragmento de código muestra la lógica principal de la aplicación:
+
+\begin{lstlisting}[language=Python, caption={Aplicación Flask para predicción de salarios}, label={lst:flask_app}]
+from flask import Flask, render_template, request
+from tensorflow.keras.models import load_model
+import numpy as np
+import joblib
+
+app = Flask(__name__)
+
+# Cargar modelo y scaler una sola vez
+model = load_model("salarypredictor.keras")
+scaler = joblib.load("scaler.pkl")
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    experience = float(request.form["experience"])
+    age = float(request.form["age"])
+    qualification = request.form["qualification"]
+    university = request.form["university"]
+    role = request.form["role"]
+    cert = request.form["cert"]
+
+    # Codificación one-hot manual
+    data = [
+        experience,
+        age,
+        1 if qualification == "Bsc" else 0,
+        1 if qualification == "Msc" else 0,
+        1 if qualification == "PhD" else 0,
+        1 if university == "Tier1" else 0,
+        1 if university == "Tier2" else 0,
+        1 if university == "Tier3" else 0,
+        1 if role == "Junior" else 0,
+        1 if role == "Mid" else 0,
+        1 if role == "Senior" else 0,
+        1 if cert == "No" else 0,
+        1 if cert == "Yes" else 0,
+    ]
+
+    x = np.array([data])
+    x = scaler.transform(x)
+    prediction = model.predict(x, verbose=0)
+    salary = prediction[0][0]
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+\end{lstlisting}
+
+\subsubsection*{Interfaz de Usuario}
+
+La interfaz web se ha diseñado con un diseño limpio y responsivo, mostrando los campos de entrada y el resultado de la predicción. A continuación se muestra una captura de la aplicación en funcionamiento:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{/home/emilio/Imágenes/memoriaia/pagina.png}
+    \caption{Interfaz web de predicción de salarios desarrollada con Flask.}
+    \label{fig:flask_gui}
+\end{figure}
+
+
+La aplicación se ejecuta localmente en el puerto 5000 y puede ser accedida desde un navegador. Esta herramienta permite probar el modelo con diferentes combinaciones de características y observar cómo influyen en el salario estimado. Su desarrollo demuestra la utilidad de integrar modelos de aprendizaje automático en aplicaciones prácticas, facilitando su uso por parte de usuarios finales.
+
 \subsection{Actividad 13: Clasificación binaria student drop out}
+
+En esta actividad se aborda un problema de clasificación binaria: predecir si un estudiante universitario se graduará o abandonará sus estudios (``Drop out''). Este tipo de análisis es de gran utilidad en el ámbito educativo, ya que permite identificar factores de riesgo y diseñar estrategias de intervención temprana.
+
+El conjunto de datos utilizado contiene información de 25\,000 estudiantes, con variables como uso de biblioteca, recursos (online/offline), situación financiera, becas, tiempo de estudio, grupo de estudio, GPA, calificaciones en pruebas y trabajos, entre otras. El objetivo es construir un modelo de clasificación que, a partir de estas características, prediga la variable binaria ``Graduated'' (1) o ``Drop out'' (0).
+
+\subsubsection*{Preparación de los Datos}
+
+Los datos se cargan desde un archivo CSV y se someten a un proceso de limpieza y transformación:
+
+\begin{enumerate}
+    \item Se eliminan las columnas identificadoras (``Student ID'' y ``Student Name'').
+    \item La variable objetivo ``Graduated'' se convierte a valores numéricos: 1 para ``Graduated'' y 0 para ``Drop out''.
+    \item Las variables categóricas (Library, Resources, Finance, Scholarships, Study Time, Study Group) se codifican mediante \textit{one-hot encoding} utilizando \texttt{pd.get\_dummies()}.
+    \item Las características numéricas (GPA, Test, Assignment) se normalizan con \texttt{MinMaxScaler} para escalar los valores al rango [0,1].
+    \item El conjunto de datos se divide en entrenamiento (80\,\%) y prueba (20\,\%).
+\end{enumerate}
+
+A continuación se muestra el código correspondiente:
+
+\begin{lstlisting}[language=Python, caption={Preprocesamiento y preparación de datos}, label={lst:clasificacion_prep}]
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import confusion_matrix, classification_report
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
+
+df = pd.read_csv('../data/Student Drop out dataset.csv')
+
+# Convertir variable objetivo a 0 y 1
+df["Graduated"] = df["Graduated"].replace({"Graduated": 1, "Drop out": 0})
+
+# Eliminar columnas identificadoras
+df = df.drop(columns=["Student ID", "Student Name"])
+
+# One-hot encoding para variables categóricas
+df = pd.get_dummies(df, drop_first=True)
+
+# Separar características y etiqueta
+X = df.drop("Graduated_1", axis=1)
+y = df["Graduated_1"]
+
+# Normalización
+scaler = MinMaxScaler()
+X_norm = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+
+# División train/test
+X_train, X_test, y_train, y_test = train_test_split(
+    X_norm, y, test_size=0.2, random_state=10
+)
+\end{lstlisting}
+
+\subsubsection*{Análisis Exploratorio}
+
+Antes de entrenar el modelo, se realiza una visualización para entender la relación entre algunas variables y la variable objetivo. La siguiente gráfica muestra la distribución del GPA según el uso de la biblioteca, coloreada por la etiqueta de graduación:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{/home/emilio/Imágenes/memoriaia/scatter.jpeg}
+    \caption{Distribución del GPA según tipo de biblioteca y estado de graduación.}
+    \label{fig:scatter_library_gpa}
+\end{figure}
+
+Se observa que los estudiantes con GPA más alto tienden a graduarse, aunque existen casos atípicos (por ejemplo, 76 estudiantes con GPA mayor a 3.5 que abandonaron). Esta visualización preliminar sugiere que el GPA es un predictor importante, pero que otros factores también influyen.
+
+\subsubsection*{Arquitectura del Modelo}
+
+Se implementa una red neuronal con una capa oculta de 16 neuronas y activación ReLU, y una capa de salida con una neurona y activación sigmoide, adecuada para clasificación binaria. La función de pérdida es \texttt{binary\_crossentropy} y el optimizador es Adam, que se ha mostrado eficaz en problemas de este tipo.
+
+\begin{lstlisting}[language=Python, caption={Definición y entrenamiento del modelo}, label={lst:clasificacion_modelo}]
+tf.random.set_seed(10)
+
+model = Sequential([
+    Dense(units=16, activation='relu', input_shape=[len(X_train.columns)]),
+    Dense(units=1, activation='sigmoid')
+])
+
+model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+history = model.fit(X_train, y_train,
+                    epochs=40,
+                    validation_split=0.2,
+                    verbose=1)
+\end{lstlisting}
+
+El entrenamiento se realiza durante 40 épocas con un 20\% de los datos de entrenamiento reservados para validación. La evolución de la pérdida y la precisión se muestra en la siguiente figura:
+
+\subsubsection*{Evaluación y Resultados}
+
+El modelo se evalúa sobre el conjunto de prueba (5\,000 muestras). Los resultados obtenidos son:
+
+\begin{itemize}
+    \item \textbf{Precisión (accuracy)}: 99.6\%
+    \item \textbf{Pérdida (loss)}: 0.0236
+\end{itemize}
+
+La matriz de confusión es la siguiente:
+
+\[
+\begin{array}{c|cc}
+ & \text{Drop Out} & \text{Graduated} \\ \hline
+\text{Drop Out} & 1479 & 18 \\
+\text{Graduated} & 2 & 3501
+\end{array}
+\]
+
+Esto indica que solo 20 muestras fueron clasificadas incorrectamente (18 falsos negativos y 2 falsos positivos), lo que demuestra un excelente rendimiento del modelo.
+
+El informe de clasificación detallado se presenta a continuación:
+
+\begin{table}[htbp]
+\centering
+\caption{Informe de clasificación.}
+\label{tab:clasificacion_report}
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Clase} & \textbf{Precisión} & \textbf{Recall} & \textbf{F1-score} & \textbf{Soporte} \\
+\midrule
+Drop Out & 1.00 & 0.99 & 0.99 & 1497 \\
+Graduated & 0.99 & 1.00 & 1.00 & 3503 \\
+\midrule
+\textbf{Exactitud} & & & \textbf{1.00} & \textbf{5000} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Conclusión}
+
+El modelo de red neuronal con una capa oculta logra una precisión superior al 99\%, clasificando correctamente la gran mayoría de los casos. Este resultado sugiere que las características seleccionadas (GPA, uso de biblioteca, recursos, situación financiera, etc.) son altamente predictivas del éxito académico. El modelo se ha guardado como \texttt{classification\_model.h5} para su posible uso en futuras predicciones o despliegue.
+
+Este ejercicio demuestra la aplicabilidad de las redes neuronales en problemas educativos y la importancia de un preprocesamiento adecuado de los datos para obtener modelos precisos y confiables.
+
 \subsection{Actividad 14: Clasificación con dataset employees}
+
+n esta actividad se aborda un problema de clasificación binaria para predecir si un empleado abandonará la empresa (\textit{Attrition}) a partir de variables demográficas, laborales y de desempeño. El conjunto de datos contiene información de 7000 empleados, con características como edad, nivel educativo, estado civil, unidad de negocio, tiempo de servicio, tasa de crecimiento, compensación y beneficios, entre otras. La variable objetivo se construye a partir de la tasa de rotación (\texttt{Attrition\_rate}), asignando 1 si supera el 50\% y 0 en caso contrario.
+
+\subsubsection*{Preprocesamiento y Modelos}
+
+Los datos se procesan eliminando columnas identificadoras, aplicando codificación \textit{one-hot} a variables categóricas y normalizando con \texttt{StandardScaler}. Se entrena una red neuronal con arquitectura base de tres capas densas (64, 32 y 16 neuronas, activación ReLU) y salida sigmoide. Se comparan variantes con \texttt{Dropout}, \texttt{BatchNormalization} y un modelo adicional que incluye imputación de valores nulos (aunque el conjunto original no presentaba faltantes significativos). Todos los modelos se entrenan con 30 épocas, tamaño de lote 32 y optimizador Adam.
+
+\begin{lstlisting}[language=Python, caption={Arquitectura base del modelo}, label={lst:modelo_base}]
+model = Sequential([
+    Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
+    Dense(32, activation='relu'),
+    Dense(16, activation='relu'),
+    Dense(1, activation='sigmoid')
+])
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+\end{lstlisting}
+
+\subsubsection*{Resultados}
+
+La siguiente tabla resume la precisión (\textit{accuracy}) en el conjunto de prueba para cada modelo:
+
+\begin{table}[htbp]
+\centering
+\caption{Comparativa de precisión de los modelos.}
+\label{tab:attrition_models}
+\begin{tabular}{l c}
+\toprule
+\textbf{Modelo} & \textbf{Accuracy} \\
+\midrule
+Modelo 1 (base) & 0.9179 \\
+Modelo 2 (más capas) & 0.9179 \\
+Modelo 3 (Dropout) & 0.9179 \\
+Modelo 4 (BatchNormalization) & 0.9179 \\
+Modelo 5 (con imputación) & 0.8850 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Se observa que los primeros cuatro modelos alcanzan una precisión muy similar (~91.8\%), lo que sugiere que las técnicas de regularización (\textit{Dropout}, \textit{BatchNormalization}) no aportan mejoras significativas para este conjunto de datos. El modelo 5, que incluye imputación de valores nulos, reduce su rendimiento a 88.5\%, posiblemente debido a que la estrategia de imputación por la media introduce ruido en las variables categóricas codificadas.
+
+\subsubsection*{Conclusión}
+
+El modelo base con tres capas ocultas ofrece un rendimiento estable y suficiente para predecir la rotación de personal. La adición de técnicas de regularización no degrada el rendimiento pero tampoco lo mejora, mientras que una imputación inadecuada puede perjudicar el modelo. Este ejercicio demuestra la importancia de un preprocesamiento cuidadoso y de la validación de cada componente en el pipeline de aprendizaje automático.
+
 \subsection{Actividad 15: Handwriting Classification model}
+
+En esta actividad se aborda un problema clásico de visión artificial: el reconocimiento de dígitos escritos a mano (0-9). A diferencia de otros datasets como MNIST, aquí se utiliza un conjunto de imágenes propias organizadas en carpetas, lo que permite experimentar con un flujo de trabajo completo desde la carga de datos hasta la evaluación del modelo. El objetivo es clasificar correctamente cada imagen en su dígito correspondiente utilizando una red neuronal totalmente conectada (\textit{fully connected}).
+
+\subsubsection*{Preparación de los Datos}
+
+Las imágenes se almacenan en una estructura de carpetas donde cada carpeta contiene las imágenes de un dígito específico. Se cargan todas las imágenes, se redimensionan a 28x28 píxeles, se convierten a escala de grises y se normalizan dividiendo entre 255 para que los píxeles queden en el rango [0,1]. El conjunto resultante contiene 21\,555 imágenes, distribuidas de manera relativamente equilibrada entre las 10 clases (aproximadamente 2\,100 a 2\,200 imágenes por dígito).
+
+\begin{lstlisting}[language=Python, caption={Carga y preprocesamiento de imágenes}, label={lst:clasificacion_digitos_carga}]
+import os
+import numpy as np
+from tensorflow import keras
+
+ruta = "/home/emilio/proyectos/tensorflow/nums"
+TAM = 28
+
+imagenes = []
+etiquetas = []
+
+for numero in range(10):
+    carpeta = os.path.join(ruta, str(numero))
+    for archivo in os.listdir(carpeta):
+        img = keras.utils.load_img(
+            os.path.join(carpeta, archivo),
+            color_mode="grayscale",
+            target_size=(TAM, TAM)
+        )
+        img = keras.utils.img_to_array(img)
+        img = np.squeeze(img)
+        img = img.astype("float32") / 255.0
+        imagenes.append(img)
+        etiquetas.append(numero)
+
+imagenes = np.array(imagenes)
+etiquetas = np.array(etiquetas)
+print(imagenes.shape)  # (21555, 28, 28)
+\end{lstlisting}
+
+Se realiza una partición estratificada (80\% entrenamiento, 20\% prueba) para mantener la proporción de clases en ambos conjuntos. La siguiente figura muestra algunas imágenes de muestra con sus etiquetas correspondientes:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{/home/emilio/Imágenes/memoriaia/numeros.jpeg}
+    \caption{Ejemplos de imágenes del conjunto de datos.}
+    \label{fig:digitos_muestra}
+\end{figure}
+
+\subsubsection*{Arquitectura del Modelo}
+
+Se utiliza un modelo secuencial con las siguientes capas:
+
+\begin{itemize}
+    \item \texttt{Flatten}: transforma la imagen 28x28 en un vector de 784 características.
+    \item Capa densa con 256 neuronas y activación ReLU.
+    \item Capa densa con 128 neuronas y activación ReLU.
+    \item Capa densa con 64 neuronas y activación ReLU.
+    \item Capa de salida con 10 neuronas y activación softmax para clasificación multiclase.
+\end{itemize}
+
+El modelo se compila con el optimizador Adam (tasa de aprendizaje 0.001), función de pérdida \texttt{sparse\_categorical\_crossentropy} y métrica de precisión. Se entrena durante 20 épocas con un tamaño de lote de 32 y un 20\% de los datos de entrenamiento reservados para validación.
+
+\begin{lstlisting}[language=Python, caption={Definición y entrenamiento del modelo}, label={lst:clasificacion_digitos_modelo}]
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(TAM, TAM)),
+    keras.layers.Dense(256, activation="relu"),
+    keras.layers.Dense(128, activation="relu"),
+    keras.layers.Dense(64, activation="relu"),
+    keras.layers.Dense(10, activation="softmax")
+])
+
+model.compile(
+    optimizer=keras.optimizers.Adam(learning_rate=0.001),
+    loss="sparse_categorical_crossentropy",
+    metrics=["accuracy"]
+)
+
+history = model.fit(
+    X_train, y_train,
+    epochs=20,
+    batch_size=32,
+    validation_split=0.2,
+    verbose=1
+)
+\end{lstlisting}
+
+\subsubsection*{Resultados y Análisis}
+
+Tras el entrenamiento, el modelo alcanza una precisión de aproximadamente 60.64\% en el conjunto de prueba, con una pérdida de 1.18. Aunque estos resultados son modestos en comparación con arquitecturas convolucionales, son esperables para una red densa con imágenes planas, ya que este tipo de modelos no explota la estructura espacial de los píxeles.
+
+Las curvas de evolución de la precisión y la pérdida durante el entrenamiento se muestran en la siguiente figura:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{/home/emilio/Imágenes/memoriaia/numerosperdida.jpeg}
+    \caption{Evolución de la precisión y la pérdida durante el entrenamiento.}
+    \label{fig:digitos_curvas}
+\end{figure}
+
+Se observa que la precisión de validación se estabiliza alrededor de 0.55-0.60, mientras que la pérdida de validación presenta cierta inestabilidad, lo que sugiere que el modelo podría beneficiarse de técnicas de regularización (como \textit{Dropout}) o de una arquitectura más adecuada para imágenes (como redes convolucionales). La precisión de entrenamiento supera a la de validación, indicando un posible sobreajuste leve, aunque moderado.
+
+\subsubsection*{Conclusión}
+
+Esta actividad demuestra el proceso completo de un proyecto de clasificación de imágenes: carga de datos, preprocesamiento, diseño de modelo, entrenamiento y evaluación. Aunque el rendimiento de una red densa es limitado para imágenes, el ejercicio sienta las bases para futuras mejoras mediante el uso de redes convolucionales (CNN), que son más adecuadas para este tipo de datos. El modelo entrenado se ha guardado como \texttt{modelo\_numeros.keras} para su posible reutilización.
+
 \subsection{Actividad 16: Mejorando el modelo base del ejercicio MNIST fashion}
+
+En esta actividad se realiza un estudio experimental sobre la optimización de una red neuronal densa (\textit{Multi-Layer Perceptron}, MLP) para la clasificación de dígitos manuscritos (MNIST). El objetivo es analizar el impacto de diferentes hiperparámetros y técnicas de regularización en el rendimiento del modelo, estableciendo un baseline y explorando mejoras progresivas.
+
+\subsubsection*{Metodología Experimental}
+
+Se parte de un modelo base con una capa densa de 64 neuronas, activación ReLU, y capa de salida softmax con 10 neuronas. El dataset MNIST contiene 70\,000 imágenes de dígitos manuscritos (28x28 píxeles en escala de grises), divididas en 60\,000 para entrenamiento y 10\,000 para prueba. Se realizan seis experimentos variando sistemáticamente los hiperparámetros:
+
+\begin{enumerate}
+    \item \textbf{Modelo base (baseline)}: 5 épocas, Adam, learning\_rate=0.001, 64 neuronas.
+    \item \textbf{Más épocas}: 40 épocas, 100 neuronas.
+    \item \textbf{Early Stopping}: 100 épocas máximas, patience=5, validation\_split=0.2.
+    \item \textbf{Callback personalizado}: detención cuando val\_accuracy supera 0.85.
+    \item \textbf{Variación del número de neuronas}: prueba de 1, 64, 128, 256 y 512 neuronas.
+    \item \textbf{Comparación de optimizadores}: Adam, RMSprop y SGD (learning\_rate 0.001 y 0.01).
+\end{enumerate}
+
+\subsubsection*{Resultados y Análisis}
+
+Los resultados de los experimentos se resumen en la siguiente tabla:
+
+\begin{table}[htbp]
+\centering
+\caption{Comparativa de experimentos para la clasificación de dígitos MNIST.}
+\label{tab:mnist_experimentos}
+\begin{tabular}{c c c c c c}
+\toprule
+\textbf{Exp.} & \textbf{Arquitectura} & \textbf{Épocas} & \textbf{Optimizador} & \textbf{LR} & \textbf{Test Acc.} \\
+\midrule
+1 & Dense(64) & 5 & Adam & 0.001 & 0.8673 \\
+2 & Dense(100) & 40 & Adam & 0.001 & 0.8876 \\
+3 & Dense(100) + ES & 18 & Adam & 0.001 & 0.8814 \\
+4 & Dense(100) + Callback & 18 & Adam & 0.001 & 0.8800 \\
+5 & Dense(512) & 50 & Adam & 0.001 & \textbf{0.8623} \\
+6 & Dense(100) & 5 & Adam & 0.001 & 0.8447 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Análisis de los Experimentos}
+
+\textbf{Experimento 1 (Baseline):} El modelo base con 5 épocas alcanza un 86.73\% de precisión en prueba, estableciendo un punto de partida sólido. La pérdida de entrenamiento (0.3197) indica que el modelo aún no ha convergido completamente.
+
+\textbf{Experimento 2 (Más épocas):} Aumentar las épocas a 40 mejora la precisión a 88.76\%, mostrando que el modelo se beneficia de más iteraciones. Sin embargo, el tiempo de entrenamiento se incrementa significativamente (5 minutos vs 40 segundos).
+
+\textbf{Experimento 3 (Early Stopping):} Con early stopping y validación, el modelo se detiene en la época 13 de 100, alcanzando 88.14\% de precisión. Se observa una mejora en la generalización (val\_accuracy 0.8926) en comparación con el experimento 2, y el tiempo de entrenamiento se reduce a 1 minuto 46 segundos.
+
+\textbf{Experimento 4 (Callback personalizado):} Detener el entrenamiento cuando val\_accuracy supera 0.85 produce resultados similares (88.00\%), demostrando que el modelo alcanza rápidamente un rendimiento aceptable.
+
+\textbf{Experimento 5 (Variación de neuronas):} Se prueban diferentes números de neuronas (1, 64, 128, 256, 512). El mejor resultado se obtiene con 512 neuronas (86.23\%), aunque la mejora respecto a 64 neuronas es modesta. Se observa que 1 neurona produce underfitting grave (50.77\%). El tiempo de entrenamiento aumenta con el número de neuronas.
+
+\textbf{Experimento 6 (Optimizadores):} La comparación entre optimizadores muestra que Adam (84.47\%) supera a RMSprop (83.05\%) y SGD (79.55\%) en este problema, confirmando la efectividad de Adam para redes densas.
+
+\subsubsection*{Conclusiones}
+
+El estudio experimental permite extraer las siguientes conclusiones:
+
+\begin{itemize}
+    \item La técnica de early stopping es efectiva para reducir el sobreajuste y el tiempo de entrenamiento, deteniendo el proceso en el punto óptimo de generalización.
+    \item Aumentar el número de neuronas mejora el rendimiento hasta cierto punto, pero el beneficio marginal disminuye; el mejor resultado se obtiene con 512 neuronas.
+    \item Adam es el optimizador más adecuado para este tipo de redes, superando a RMSprop y SGD.
+    \item El modelo base con 64 neuronas y 5 épocas ya ofrece un rendimiento aceptable, y las mejoras posteriores son incrementales.
+    \item El uso de callbacks personalizados permite un control fino del entrenamiento, aunque early stopping es suficiente en la mayoría de los casos.
+\end{itemize}
+
+Este análisis demuestra la importancia de la experimentación sistemática en el ajuste de hiperparámetros y proporciona una guía práctica para la optimización de redes neuronales densas en problemas de clasificación de imágenes.
+
 \subsection{Actividad 17: Weather Classification}
+
+n esta actividad se aborda el problema de clasificación de imágenes de condiciones meteorológicas (\textit{shine, cloud, rain, sunrise}) utilizando redes neuronales convolucionales (CNN) y perceptrones multicapa (MLP). El objetivo es comparar el rendimiento de diferentes arquitecturas y analizar su capacidad para extraer características visuales relevantes.
+
+\subsubsection*{Metodología Experimental}
+
+El conjunto de datos está organizado en tres carpetas: \texttt{train}, \texttt{validation} y \texttt{test}, cada una con subcarpetas para las cuatro clases. El número de imágenes es de 791 para entrenamiento, 179 para validación y 155 para prueba. Las imágenes se redimensionan a \(224 \times 224\) píxeles y se normalizan dividiendo por 255. Se emplean generadores de datos (\texttt{ImageDataGenerator}) para cargar las imágenes en lotes de 64.
+
+Se diseñan tres modelos:
+
+\begin{enumerate}
+    \item \textbf{Modelo 1 (CNN)}: Arquitectura convolucional con tres bloques de convolución + max pooling (filtros 16, 32, 64), seguidos de una capa \textit{Flatten} y una capa densa de 1050 neuronas con activación ReLU, y capa de salida softmax de 4 neuronas. Se entrena durante 10 épocas con optimizador Adam y función de pérdida \textit{categorical crossentropy}.
+    \item \textbf{Modelo 2 (MLP)}: Red densa con una capa \textit{Flatten} seguida de tres capas densas de 1200, 600 y 300 neuronas (ReLU), y salida softmax. Se entrena durante 10 épocas con Adam.
+    \item \textbf{Modelo 3 (MLP)}: Similar al modelo 2, con capas densas de 1000, 500 y 500 neuronas. También se entrena durante 10 épocas con Adam.
+\end{enumerate}
+
+Se evalúa el rendimiento en el conjunto de test y se comparan las métricas de pérdida y precisión. Además, se visualizan las curvas de evolución de la pérdida y precisión durante el entrenamiento del modelo 1.
+
+\subsubsection*{Resultados}
+
+\begin{table}[htbp]
+\centering
+\caption{Resultados de los modelos para la clasificación de imágenes meteorológicas.}
+\label{tab:clima_experimentos}
+\begin{tabular}{c c c c}
+\toprule
+\textbf{Modelo} & \textbf{Arquitectura} & \textbf{Loss (test)} & \textbf{Accuracy (test)} \\
+\midrule
+Modelo 1 & CNN (Conv2D + MaxPooling + Dense) & 0.2980 & \textbf{88.39\%} \\
+Modelo 2 & MLP (1200-600-300) & 0.9445 & 78.06\% \\
+Modelo 3 & MLP (1000-500-500) & 0.9295 & 77.42\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El modelo 1 (CNN) alcanza la mayor precisión, con un 88.39\%, superando ampliamente a los modelos MLP. Las pérdidas en test son notablemente menores para la CNN (0.2980) en comparación con los MLP (superiores a 0.9).
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/Imágenes/memoriaia/lossweather.jpeg} 
+\caption{Evolución de la pérdida y precisión durante el entrenamiento del modelo 1.}
+\label{fig:historia_modelo1}
+\end{figure}
+
+\subsubsection*{Análisis}
+
+Los resultados evidencian la superioridad de las redes convolucionales para tareas de clasificación de imágenes. La CNN es capaz de aprender características jerárquicas (bordes, texturas, patrones) que son esenciales para distinguir entre condiciones climáticas, mientras que los MLP procesan los píxeles de forma aplanada sin considerar la estructura espacial, lo que limita su capacidad de generalización.
+
+El modelo 1 presenta un buen equilibrio entre rendimiento y complejidad; aunque se observa una ligera fluctuación en la precisión de validación, el sobreajuste es controlado. La pérdida de validación no aumenta significativamente, lo que indica que el modelo no está memorizando los datos de entrenamiento.
+
+Los MLP, a pesar de tener un número similar de parámetros, obtienen resultados inferiores. Esto confirma que para imágenes de tamaño \(224 \times 224\), las capas convolucionales son fundamentales para extraer información relevante.
+
+\subsubsection*{Conclusiones}
+
+Este estudio experimental demuestra que:
+
+\begin{itemize}
+    \item Las arquitecturas convolucionales son claramente superiores a las redes densas para la clasificación de imágenes, logrando una precisión del 88.39\% frente al ~78\% de los MLP.
+    \item El uso de capas de \textit{pooling} y un número moderado de filtros permite capturar patrones visuales sin incurrir en sobreajuste.
+    \item Los MLP, aunque más simples, no son adecuados para imágenes de alta resolución debido a la pérdida de información espacial.
+    \item La normalización y el redimensionado adecuado de las imágenes son pasos clave para el éxito del modelo.
+\end{itemize}
+
+Como trabajo futuro, se podría explorar el uso de arquitecturas preentrenadas (transfer learning) para mejorar aún más la precisión, así como técnicas de aumento de datos para incrementar la robustez del modelo.
+
 \subsection{Actividad 18: Carta tecnica de transfer learging tabla 2}
+
+En esta actividad se profundiza en la optimización de una CNN para la clasificación de imágenes meteorológicas, explorando el impacto de técnicas de regularización (L1, L2, Dropout) y el ajuste de la tasa de aprendizaje. El objetivo es mejorar la capacidad de generalización del modelo y reducir el sobreajuste, manteniendo un alto rendimiento en el conjunto de validación.
+
+\subsubsection*{Metodología Experimental}
+
+Se parte de la arquitectura base de la Actividad 17 (CNN con tres bloques convolucionales de 16, 32 y 64 filtros, capa \textit{Flatten}, y una capa densa de 1050 neuronas). Sobre esta base se introducen las siguientes variaciones:
+
+\begin{enumerate}
+\item \textbf{Modelo 1 (baseline)}: 20 épocas, sin regularización, tasa de aprendizaje (lr) = 0.001.
+\item \textbf{Modelo 2 (early stopping)}: igual arquitectura, pero con \textit{early stopping} (patience=5) sobre la precisión de validación, deteniendo en la época 7 de 20.
+\item \textbf{Modelo 3 (menos neuronas)}: capa densa de 500 neuronas (en lugar de 1050), con early stopping.
+\item \textbf{Modelo 4 (regularización L1)}: regularización L1 con factor 0.01 en la capa densa.
+\item \textbf{Modelo 5 (regularización L2)}: regularización L2 con factor 0.01 en la capa densa.
+\item \textbf{Modelo 6 (Dropout)}: capa Dropout con tasa 0.6 tras la capa densa (con L2).
+\item \textbf{Modelo 7 (Dropout + early stopping)}: similar al modelo 6 pero con early stopping.
+\item \textbf{Modelo 8 (learning rate reducido)}: tasa de aprendizaje 0.0001 (frente a 0.001).
+\end{enumerate}
+
+Todos los modelos se entrenan con el optimizador Adam, función de pérdida \textit{categorical crossentropy} y se evalúan en el conjunto de validación. Se registran la pérdida, precisión, tiempo de entrenamiento y se visualizan las curvas de precisión.
+El modelo 7 alcanza la mayor precisión (92\%) con una pérdida del 75\%, mientras que el modelo 2 logra la menor pérdida (24\%) con una precisión del 90%. El modelo 8, con una tasa de aprendizaje más baja, obtiene resultados similares al baseline (91.61%) pero con una pérdida ligeramente inferior.
+
+\subsubsection*{Análisis}
+
+El uso de \textit{early stopping} (modelo 2) reduce significativamente el sobreajuste, como lo indica la menor pérdida de validación (24\%) en comparación con el baseline (37.9\%). Sin embargo, la precisión cae ligeramente (del 91.6\% al 90\%), lo que sugiere que el modelo se detiene en un punto donde aún podría mejorar, pero se evita el sobreajuste.
+
+La regularización L2 (modelo 5) produce una pérdida más alta (54\%) y una precisión inferior (89\%), lo que indica que el factor de regularización (0.01) puede ser demasiado fuerte para esta tarea, penalizando en exceso los pesos y reduciendo la capacidad del modelo.
+
+El Dropout (modelos 6 y 7) demuestra ser efectivo para mejorar la generalización: el modelo 7 alcanza el mejor rendimiento (92\% de precisión) con early stopping, superando incluso al baseline. La pérdida (75\%) es mayor, pero esto es esperable debido a la naturaleza estocástica del Dropout, que introduce ruido durante el entrenamiento.
+
+La reducción de la tasa de aprendizaje (modelo 8) no produce una mejora sustancial; los resultados son muy similares al baseline, lo que sugiere que el valor original (0.001) ya es adecuado para este problema.
+
+\subsubsection*{Conclusiones}
+
+Este estudio experimental permite extraer las siguientes conclusiones:
+
+\begin{itemize}
+\item La técnica de \textit{early stopping} es eficaz para controlar el sobreajuste y reducir el tiempo de entrenamiento, aunque puede sacrificar ligeramente la precisión final.
+\item La regularización L2, con el factor utilizado, resulta demasiado agresiva y perjudica el rendimiento; sería necesario ajustar el coeficiente de regularización.
+\item El Dropout combinado con early stopping ofrece el mejor equilibrio entre precisión y generalización, alcanzando un 92\% de acierto en validación.
+\item La tasa de aprendizaje por defecto de Adam (0.001) ya proporciona buenos resultados; reducirla no aporta mejoras significativas.
+\item La reducción del número de neuronas (modelo 3) no mejora el rendimiento, indicando que la capacidad del modelo base es adecuada.
+\end{itemize}
+
+En futuros experimentos, se podría explorar la combinación de Dropout con regularización L2 con coeficientes más bajos, así como el uso de \textit{data augmentation} para aumentar la diversidad del conjunto de entrenamiento y mejorar aún la capacidad de generalización.
+
 \subsection{Actividad 19: Carta tecnica 8 modelos handling overtfitting}
+
+En esta actividad se amplía el estudio experimental de la actividad anterior incorporando técnicas de \textit{data augmentation} y evaluando su impacto en el rendimiento de la CNN para la clasificación de imágenes meteorológicas. El objetivo es analizar cómo el aumento de datos, combinado con regularización y ajuste de hiperparámetros, afecta la capacidad de generalización del modelo y su robustez ante variaciones en las imágenes de entrada.
+
+\subsubsection*{Metodología Experimental}
+
+Se parte de la misma arquitectura base (CNN con tres bloques convolucionales de 16, 32 y 64 filtros, capa \textit{Flatten}, y una capa densa de 1050 neuronas) pero se introduce \textit{data augmentation} mediante el generador \texttt{ImageDataGenerator} de Keras, aplicando transformaciones como rotaciones, desplazamientos, zoom y volteos horizontales para aumentar la diversidad del conjunto de entrenamiento.
+
+Se diseñan ocho experimentos, manteniendo la misma estructura que en la actividad anterior pero con las siguientes variaciones:
+
+\begin{enumerate}
+    \item \textbf{Modelo 1 (baseline con augmentation)}: 20 épocas, sin regularización, lr = 0.001.
+    \item \textbf{Modelo 2}: early stopping (patience=5) sobre precisión de validación.
+    \item \textbf{Modelo 3}: capa densa reducida a 500 neuronas, con early stopping.
+    \item \textbf{Modelo 4}: regularización L1 (factor 0.01) en la capa densa.
+    \item \textbf{Modelo 5}: regularización L2 (factor 0.01) en la capa densa.
+    \item \textbf{Modelo 6}: L2 + Dropout (tasa 0.6), con early stopping.
+    \item \textbf{Modelo 7}: L2 + Dropout (tasa 0.6), con early stopping (variante).
+    \item \textbf{Modelo 8}: tasa de aprendizaje reducida (0.0001), con early stopping.
+\end{enumerate}
+
+Todos los modelos se entrenan con optimizador Adam y función de pérdida \textit{categorical crossentropy}. Se registran la pérdida, precisión, tiempo de entrenamiento y se visualizan las curvas de precisión y pérdida.
+
+\subsubsection*{Resultados}
+
+\begin{table}[htbp]
+\centering
+\caption{Resumen de resultados con data augmentation.}
+\label{tab:resumen_augment}
+\begin{tabular}{c c c c c}
+\toprule
+\textbf{Modelo} & \textbf{Variación} & \textbf{Épocas} & \textbf{Loss (val)} & \textbf{Accuracy (val)} \\
+\midrule
+Modelo 1 & Baseline + augmentation & 20/20 & 0.003 & 100\% \\
+Modelo 2 & Early stopping & 8/20 & 0.12 & 95\% \\
+Modelo 6 & L2 + Dropout + early stopping & 13/20 & 0.64 & 91\% \\
+Modelo 8 & Learning rate = 0.0001 & 9/20 & 0.16 & 95\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El modelo 1 alcanza una precisión del 100\% en validación con una pérdida extremadamente baja (0.003), aunque esto sugiere un posible sobreajuste. Los modelos con regularización (modelos 4 y 5) presentan pérdidas muy altas (63.4 y 80 respectivamente) y precisiones bajas (70\% y 81\%), indicando que los factores de regularización son excesivos. El modelo 6, que combina L2 y Dropout, logra un equilibrio con un 91\% de precisión y una pérdida de 0.64.
+
+\subsubsection*{Análisis}
+
+El \textit{data augmentation} incrementa la variabilidad del conjunto de entrenamiento, lo que permite al modelo aprender características más robustas. Sin embargo, el modelo 1 muestra una precisión perfecta en validación (100\%), lo que podría indicar que el conjunto de validación no es suficientemente representativo o que el modelo está sobreajustando a las características específicas de las imágenes aumentadas.
+
+El early stopping (modelo 2) reduce el sobreajuste y mantiene una alta precisión (95\%), con una pérdida razonable (0.12). Esto confirma que la detención temprana es efectiva para controlar el sobreajuste sin sacrificar demasiado rendimiento.
+
+La regularización L1 y L2 con factor 0.01 resulta perjudicial, probablemente porque penaliza en exceso los pesos y limita la capacidad del modelo para aprender patrones complejos. El Dropout (modelo 6) mejora la generalización, logrando una precisión del 91\% con una pérdida moderada (0.64), lo que indica que la combinación de L2 y Dropout es más equilibrada.
+
+El modelo 8, con una tasa de aprendizaje reducida, obtiene resultados similares al modelo 2 (95\% de precisión), lo que sugiere que el valor por defecto de Adam (0.001) ya es adecuado; una reducción adicional no aporta mejoras significativas.
+
+\subsubsection*{Conclusiones}
+
+Este estudio experimental permite extraer las siguientes conclusiones:
+
+\begin{itemize}
+    \item El \textit{data augmentation} mejora la capacidad del modelo para generalizar, pero puede inducir sobreajuste si no se combina con técnicas de regularización.
+    \item El early stopping es una herramienta eficaz para controlar el sobreajuste, manteniendo una alta precisión (95\%) y reduciendo el tiempo de entrenamiento.
+    \item La regularización L1 y L2 con factores altos (0.01) resulta contraproducente; sería necesario ajustar estos coeficientes con valores más pequeños.
+    \item El Dropout (tasa 0.6) combinado con L2 y early stopping ofrece un buen equilibrio entre precisión (91\%) y generalización.
+    \item La tasa de aprendizaje por defecto de Adam (0.001) es adecuada; reducirla a 0.0001 no produce mejoras significativas.
+\end{itemize}
+
 \subsection{Actividad 20: The yelp polarity datasets}
+
+En esta actividad se aborda el problema de clasificación de sentimientos (positivo/negativo) utilizando el conjunto de datos \texttt{yelp\_polarity\_reviews} de TensorFlow Datasets. El objetivo es construir un modelo de aprendizaje profundo que, a partir del texto de una reseña, prediga su polaridad. Se emplea una arquitectura basada en \textit{embeddings} y capas densas, y se evalúa su rendimiento en un conjunto de prueba. Además, se visualizan las curvas de entrenamiento y se realizan predicciones sobre nuevas frases.
+
+\subsubsection*{Metodología Experimental}
+
+El conjunto de datos \texttt{yelp\_polarity\_reviews} contiene 560.000 reseñas para entrenamiento y 38.000 para prueba, etiquetadas como positivas (clase 1) o negativas (clase 0). Se extraen 20.000 muestras de entrenamiento y 8.000 de prueba para agilizar el experimento. El preprocesamiento incluye:
+
+\begin{itemize}
+    \item Tokenización con un vocabulario de 10.000 palabras (\texttt{vocab\_size = 10000}) y token \texttt{<OOV>} para palabras desconocidas.
+    \item Conversión de textos a secuencias de enteros y \textit{pad} a una longitud máxima de 132 palabras (basada en la longitud media observada).
+    \item División del conjunto de entrenamiento en entrenamiento (80\%) y validación (20\%).
+\end{itemize}
+
+El modelo se compone de una capa \texttt{Embedding} con dimensión 16, una capa \texttt{GlobalAveragePooling1D}, una capa densa de 24 neuronas con activación ReLU y una capa de salida con activación sigmoide. Se entrena durante 10 épocas con optimizador Adam, función de pérdida \textit{binary crossentropy} y métrica de precisión.
+
+\begin{lstlisting}[language=Python, caption=Arquitectura del modelo para análisis de sentimientos., label=lst:modelo_yelp]
+model = tf.keras.Sequential([
+    tf.keras.layers.Embedding(vocab_size, embedding_dim, input_length=max_length),
+    tf.keras.layers.GlobalAveragePooling1D(),
+    tf.keras.layers.Dense(24, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+\end{lstlisting}
+
+\subsubsection*{Resultados}
+
+La evolución de la precisión y pérdida durante el entrenamiento se muestra en la Figura~\ref{fig:historia_yelp}. La precisión en el conjunto de prueba alcanza un 87.66\%, con una pérdida de 0.3355. La precisión de validación se estabiliza en torno al 88--89\% a partir de la época 6, sin signos de sobreajuste severo.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/Imágenes/memoriaia/presicionyelp.jpeg}
+\caption{Evolución de la precisión y pérdida durante el entrenamiento.}
+\label{fig:historia_yelp}
+\end{figure}
+
+Se realizan predicciones sobre cuatro frases de ejemplo (dos positivas y dos negativas). El modelo clasifica correctamente todas ellas con probabilidades superiores al 0.8 para las positivas e inferiores a 0.1 para las negativas (Tabla~\ref{tab:predicciones_yelp}).
+
+\begin{table}[htbp]
+\centering
+\caption{Predicciones sobre frases de ejemplo.}
+\label{tab:predicciones_yelp}
+\begin{tabular}{p{7cm} c c}
+\toprule
+\textbf{Frase} & \textbf{Probabilidad} & \textbf{Sentimiento} \\
+\midrule
+The restaurant was absolutely fantastic... & 0.917 & Positivo \\
+I've had an incredible day at the beach... & 0.807 & Positivo \\
+The movie was a big disappointment... & 0.073 & Negativo \\
+I bought a new phone and it stopped working... & 0.061 & Negativo \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Análisis}
+
+El modelo alcanza un rendimiento sólido (87.66\% de precisión) con una arquitectura simple y un número reducido de parámetros. La capa \texttt{GlobalAveragePooling1D} promedia los vectores de embedding a lo largo de la secuencia, lo que permite capturar información semántica global sin aumentar la complejidad computacional. La precisión de validación se mantiene cercana a la de entrenamiento, indicando una buena generalización.
+
+Las predicciones sobre frases nuevas confirman la capacidad del modelo para distinguir sentimientos, incluso con frases cortas. La exportación de los vectores de embedding (archivos \texttt{vectors.tsv} y \texttt{metadata.tsv}) permite visualizar las relaciones semánticas entre palabras en un espacio 16-dimensional, lo que podría utilizarse para análisis posteriores.
+
+Como posibles mejoras, se podría aumentar el tamaño del vocabulario, usar capas \texttt{LSTM} o \texttt{Bidirectional} para capturar dependencias secuenciales, o emplear \textit{transfer learning} con modelos preentrenados como BERT.
+
+\subsubsection*{Conclusiones}
+
+Este estudio experimental demuestra que:
+
+\begin{itemize}
+    \item Un modelo sencillo con capa de embedding y \textit{pooling} global es eficaz para la clasificación de sentimientos, logrando una precisión del 87.66\% en el conjunto de prueba.
+    \item El preprocesamiento adecuado (tokenización, padding, división train/val) es crucial para el rendimiento del modelo.
+    \item La visualización de las curvas de entrenamiento y validación permite detectar posibles problemas de sobreajuste o subajuste.
+    \item El modelo generaliza bien a frases nuevas, como lo muestran las predicciones de ejemplo.
+\end{itemize}
+
+Como trabajo futuro, se sugiere explorar arquitecturas más complejas (LSTM, GRU) y el uso de \textit{embeddings} preentrenados (GloVe, Word2Vec) para mejorar la precisión y capturar mejor el contexto.
+
+\subsubsection*{Código relevante}
+
+A continuación se incluyen los fragmentos de código más importantes del experimento.
+
+\begin{lstlisting}[language=Python, caption=Carga y exploración del dataset., label=lst:carga_yelp]
+import tensorflow as tf
+import tensorflow_datasets as tfds
+
+(train_dataset, test_dataset), dataset_info = tfds.load(
+    "yelp_polarity_reviews",
+    split=["train", "test"],
+    shuffle_files=True,
+    as_supervised=True,
+    with_info=True,
+)
+
+# Exploración: distribución de reseñas y longitudes
+def dataset_insights(dataset, num_samples=2000):
+    # ... (código para calcular longitudes y conteos)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Preprocesamiento y tokenización., label=lst:preprocesamiento_yelp]
+vocab_size = 10000
+embedding_dim = 16
+max_length = 132
+trunc_type='post'
+padding_type='post'
+oov_tok = "<OOV>"
+
+tokenizer = Tokenizer(num_words=vocab_size, oov_token=oov_tok)
+
+# Convertir dataset a listas de texto y etiquetas
+train_text = [text.numpy().decode('utf-8') for text, _ in train_dataset.take(20000)]
+train_labels = np.array([label.numpy() for _, label in train_dataset.take(20000)])
+test_text = [text.numpy().decode('utf-8') for text, _ in test_dataset.take(8000)]
+test_labels = np.array([label.numpy() for _, label in test_dataset.take(8000)])
+
+tokenizer.fit_on_texts(train_text)
+train_sequences = tokenizer.texts_to_sequences(train_text)
+test_sequences = tokenizer.texts_to_sequences(test_text)
+
+train_padded = pad_sequences(train_sequences, maxlen=max_length,
+                             padding=padding_type, truncating=trunc_type)
+test_padded = pad_sequences(test_sequences, maxlen=max_length,
+                            padding=padding_type, truncating=trunc_type)
+
+# División train/validation
+train_padded, val_padded, train_labels, val_labels = train_test_split(
+    train_padded, train_labels, test_size=0.2, random_state=42)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Entrenamiento y evaluación., label=lst:entrenamiento_yelp]
+model.compile(loss='binary_crossentropy',
+              optimizer='adam', metrics=['accuracy'])
+
+history = model.fit(train_padded, train_labels,
+                    epochs=10, validation_data=(val_padded, val_labels))
+
+results = model.evaluate(test_padded, test_labels)
+print("Test Loss: ", results[0])
+print("Test Accuracy: ", results[1])
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Predicción sobre nuevas frases., label=lst:prediccion_yelp]
+new_sentences = [
+    "The restaurant was absolutely fantastic...",
+    "I've had an incredible day at the beach...",
+    "The movie was a big disappointment...",
+    "I bought a new phone and it stopped working..."
+]
+
+new_sequences = tokenizer.texts_to_sequences(new_sentences)
+new_padded = pad_sequences(new_sequences, maxlen=max_length,
+                           padding=padding_type, truncating=trunc_type)
+
+predictions = model.predict(new_padded)
+for i, sent in enumerate(new_sentences):
+    prob = predictions[i][0]
+    sentiment = "Positivo" if prob > 0.5 else "Negativo"
+    print(f"Frase: {sent[:50]}... -> Prob: {prob:.3f} -> {sentiment}")
+\end{lstlisting}
+
 \subsection{Actividad 21: modelos para evitar el overtfitting yelp}
+
 \subsection{Actividad 22: Naive Forecast con dataset mercantil}
+
 \subsection{Actividad 23: Sales forescasting using neural network}
-\subsection{Conclusion y pensamientos finales}
+
+\section{Conclusion y pensamientos finales}
+
+\section{Fuentes}
+
 \end{document}
