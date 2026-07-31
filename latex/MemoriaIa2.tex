@@ -1603,12 +1603,309 @@ for i, sent in enumerate(new_sentences):
 
 \subsection{Actividad 21: modelos para evitar el overtfitting yelp}
 
-\subsection{Actividad 22: Naive Forecast con dataset mercantil}
+En esta actividad se amplía el estudio de clasificación de sentimientos sobre el conjunto de datos \texttt{yelp\_polarity\_reviews}, explorando el impacto de diferentes configuraciones de la capa de \textit{embedding}, la inclusión de \textit{Dropout} y la elección del optimizador. El objetivo es identificar la combinación de hiperparámetros que maximiza la precisión y minimiza el sobreajuste, manteniendo un tiempo de entrenamiento razonable.
 
-\subsection{Actividad 23: Sales forescasting using neural network}
+\subsubsection*{Metodología Experimental}
 
-\section{Conclusion y pensamientos finales}
+Se parte de la arquitectura base de la Actividad 20 (Embedding + GlobalAveragePooling1D + Dense(24) + Dense(1)), y se introducen las siguientes variaciones:
 
+\begin{enumerate}
+    \item \textbf{Modelo 1 (baseline)}: Embedding con \texttt{vocab\_size=10000} y \texttt{embedding\_dim=16}, optimizador Adam, \textit{early stopping} con paciencia 3 sobre la pérdida de validación.
+    \item \textbf{Modelo 2}: Igual arquitectura pero con mayor número de parámetros (vocabulario o dimensión de embedding aumentados), manteniendo Adam.
+    \item \textbf{Modelo 3}: Embedding con \texttt{embedding\_dim=32} (el doble que el baseline), Adam.
+    \item \textbf{Modelo 4}: Baseline con capa \textit{Dropout} (tasa 0.5) después de la capa densa de 24 neuronas, Adam.
+    \item \textbf{Modelo 5}: Igual que el modelo 4 pero con optimizador RMSprop en lugar de Adam.
+\end{enumerate}
+
+Todos los modelos se entrenan con función de pérdida \textit{binary crossentropy}, tamaño de lote 32, y se detienen anticipadamente si la pérdida de validación no mejora durante 3 épocas. Se registran la pérdida, precisión, tiempo de entrenamiento y se visualizan las curvas de precisión y pérdida.
+
+\subsubsection*{Resultados}
+
+\begin{table}[htbp]
+\centering
+\caption{Resumen de los resultados más relevantes.}
+\label{tab:resumen_yelp_opt}
+\begin{tabular}{c c c c c c}
+\toprule
+\textbf{Modelo} & \textbf{Variación} & \textbf{Épocas} & \textbf{Loss (val)} & \textbf{Accuracy (val)} & \textbf{Tiempo (s)} \\
+\midrule
+Modelo 1 & Baseline (Adam) & 9/10 & 0.28 & 89\% & 12.9 \\
+Modelo 2 & Más parámetros & 3/10 & 0.28 & 88\% & 17.3 \\
+Modelo 3 & Embedding dim=32 & 3/10 & 0.37 & 82\% & 46.4 \\
+Modelo 4 & Dropout (0.5) + Adam & 3/10 & 0.4755 & 78\% & 7.8 \\
+Modelo 5 & Dropout (0.5) + RMSprop & 3/10 & 0.65 & 67\% & 8.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Análisis}
+
+El modelo 1, con una configuración moderada de embedding (dimensión 16) y optimizador Adam, logra el mejor equilibrio entre precisión y tiempo de entrenamiento. La precisión de validación (89\%) es ligeramente superior a la obtenida en la actividad anterior (87.66\% en test), lo que sugiere que el \textit{early stopping} y una mejor selección de hiperparámetros contribuyen a una mejor generalización.
+
+El aumento de parámetros (modelo 2) no mejora el rendimiento y solo incrementa el tiempo de entrenamiento, lo que indica que la capacidad del modelo base es suficiente para capturar los patrones del conjunto de datos. La duplicación de la dimensión del embedding (modelo 3) resulta contraproducente: la precisión cae al 82\% y el tiempo se dispara a 46.4 segundos. Esto sugiere que una mayor dimensionalidad no necesariamente aporta más información y puede introducir ruido o dificultar la convergencia.
+
+La inclusión de Dropout (modelo 4) reduce la precisión al 78\%, probablemente porque la tasa de 0.5 es demasiado agresiva para un modelo con pocas capas, eliminando demasiada información. El optimizador RMSprop (modelo 5) ofrece el peor resultado (67\%), confirmando que Adam es más adecuado para este tipo de problemas.
+
+\subsubsection*{Conclusiones}
+
+Este estudio experimental permite extraer las siguientes conclusiones:
+
+\begin{itemize}
+    \item El modelo base con embedding de dimensión 16 y optimizador Adam ofrece el mejor rendimiento (89\% de precisión) con un tiempo de entrenamiento reducido (12.9 s).
+    \item Aumentar la capacidad del modelo (más parámetros o mayor dimensión de embedding) no mejora la precisión y puede degradarla, además de incrementar el tiempo de cómputo.
+    \item El uso de Dropout con tasa 0.5 resulta excesivo para esta arquitectura, perjudicando la precisión.
+    \item Adam supera claramente a RMSprop en este contexto, tanto en precisión como en velocidad de convergencia.
+    \item El \textit{early stopping} es efectivo para evitar el sobreajuste y reducir el tiempo de entrenamiento, deteniendo el proceso en el punto óptimo.
+\end{itemize}
+
+Como trabajo futuro, se podría explorar la combinación de Dropout con tasas más bajas (e.g., 0.2--0.3), así como el uso de capas recurrentes (LSTM, GRU) para capturar dependencias secuenciales a largo plazo. También sería interesante evaluar el impacto de \textit{embeddings} preentrenados (GloVe, Word2Vec) en lugar de los entrenados desde cero.
+
+\subsubsection*{Código relevante}
+
+A continuación se incluyen los fragmentos de código más importantes de los experimentos.
+
+\begin{lstlisting}[language=Python, caption=Definición de los modelos con diferentes configuraciones., label=lst:modelos_yelp_opt]
+# Modelo 1: Baseline
+model_1 = tf.keras.Sequential([
+    tf.keras.layers.Embedding(vocab_size, 16, input_length=max_length),
+    tf.keras.layers.GlobalAveragePooling1D(),
+    tf.keras.layers.Dense(24, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+# Modelo 3: Embedding con dimensión 32
+model_3 = tf.keras.Sequential([
+    tf.keras.layers.Embedding(vocab_size, 32, input_length=max_length),
+    tf.keras.layers.GlobalAveragePooling1D(),
+    tf.keras.layers.Dense(24, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+# Modelo 4: Con Dropout
+model_4 = tf.keras.Sequential([
+    tf.keras.layers.Embedding(vocab_size, 16, input_length=max_length),
+    tf.keras.layers.GlobalAveragePooling1D(),
+    tf.keras.layers.Dense(24, activation='relu'),
+    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Entrenamiento con early stopping y comparación de optimizadores., label=lst:entrenamiento_yelp_opt]
+early_stop = tf.keras.callbacks.EarlyStopping(
+    monitor='val_loss', patience=3, restore_best_weights=True)
+
+# Modelo 1 con Adam
+model_1.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+history_1 = model_1.fit(train_padded, train_labels, epochs=10,
+                        validation_data=(val_padded, val_labels),
+                        callbacks=[early_stop])
+
+# Modelo 5 con RMSprop
+model_5.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+history_5 = model_5.fit(train_padded, train_labels, epochs=10,
+                        validation_data=(val_padded, val_labels),
+                        callbacks=[early_stop])
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Evaluación y registro de resultados., label=lst:evaluacion_yelp_opt]
+def evaluate_model(model, test_padded, test_labels):
+    loss, acc = model.evaluate(test_padded, test_labels, verbose=0)
+    return loss, acc
+
+# Ejemplo de uso
+loss, acc = evaluate_model(model_1, test_padded, test_labels)
+print(f"Modelo 1 -> Loss: {loss:.4f}, Accuracy: {acc:.4f}")
+\end{lstlisting}
+
+\subsection{Actividad 22: Naive Forecast con Dataset Mercantil}
+
+En esta actividad se aborda el problema de pronóstico de ventas diarias de un producto específico utilizando un conjunto de datos mercantil. Se aplica el método de pronóstico \textit{Naive} (o método ingenuo), que asume que el valor futuro será igual al último valor observado. El objetivo es evaluar la efectividad de este método simple en un contexto de series temporales con pocos datos históricos.
+
+\subsubsection*{Metodología Experimental}
+
+El conjunto de datos está compuesto por varios archivos CSV que contienen registros de movimientos de inventario. Los datos se combinan en un único DataFrame y se filtran para conservar únicamente los registros de ventas (Tipmovinv = 12). Posteriormente, se identifican los productos más vendidos y se selecciona el producto con mayor volumen de ventas para el análisis.
+
+Para el producto elegido (07TOPUBR), se realiza un análisis de ventas diarias. Los datos disponibles son escasos: solo dos registros de ventas en el período comprendido entre octubre de 2025 y abril de 2026. Se divide el conjunto en entrenamiento (primer día) y validación (último día). El pronóstico \textit{Naive} consiste en utilizar el valor del último día de entrenamiento como predicción para el día de validación.
+
+Se calculan métricas de error para evaluar el desempeño del pronóstico:
+
+\begin{itemize}
+    \item \textbf{Error Cuadrático Medio (MSE)}: Mide el promedio de los errores al cuadrado.
+    \item \textbf{Error Absoluto Medio (MAE)}: Mide el promedio de los errores absolutos.
+\end{itemize}
+
+\subsubsection*{Resultados}
+
+El producto seleccionado, 07TOPUBR, presenta dos registros de ventas: 363,000 unidades el 20 de octubre de 2025 y 3,850 unidades el 30 de abril de 2026. El pronóstico \textit{Naive} para el 30 de abril de 2026 es de 363,000 unidades, lo que resulta en un error absoluto de 359,150 unidades.
+
+La Figura~\ref{fig:naive_forecast} muestra la comparación entre el valor real y el pronóstico.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{/home/emilio/Imágenes/memoriaia/relacionproducto.jpeg}
+\caption{Comparación entre el valor real y el pronóstico Naive para el producto 07TOPUBR.}
+\label{fig:naive_forecast}
+\end{figure}
+
+Las métricas de error obtenidas son:
+
+\begin{table}[htbp]
+\centering
+\caption{Métricas de error del pronóstico Naive.}
+\label{tab:naive_metrics}
+\begin{tabular}{c c}
+\toprule
+\textbf{Métrica} & \textbf{Valor} \\
+\midrule
+MSE & 128,988,722,500.00 \\
+MAE & 359,150.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Análisis}
+
+El pronóstico \textit{Naive} presenta un error muy elevado, con un MAE de 359,150 unidades, lo que representa una desviación significativa respecto al valor real (3,850 unidades). Esto se debe a la naturaleza esporádica de las ventas del producto y a la falta de un patrón temporal consistente en los datos históricos.
+
+El método \textit{Naive} es adecuado para series temporales con comportamiento estable o tendencia constante, pero en este caso, con solo dos puntos de datos separados por varios meses, el método no puede capturar la estacionalidad o la variabilidad del comportamiento de ventas.
+
+La alta magnitud del MSE (128,988,722,500.00) refleja la gran diferencia entre el pronóstico y el valor real, amplificada por el cuadrado del error.
+
+\subsubsection*{Conclusiones}
+
+Este estudio experimental permite extraer las siguientes conclusiones:
+
+\begin{itemize}
+    \item El método \textit{Naive} es extremadamente sensible a la cantidad y calidad de los datos históricos disponibles.
+    \item Para productos con ventas esporádicas o con pocos datos históricos, el pronóstico \textit{Naive} no es recomendable, ya que produce errores muy grandes.
+    \item La alta variabilidad en las ventas del producto 07TOPUBR sugiere que se necesitan métodos más avanzados (como modelos de suavizado exponencial o ARIMA) para capturar patrones estacionales o tendencias.
+    \item La evaluación con métricas como MSE y MAE permite cuantificar el error y comparar diferentes métodos de pronóstico.
+\end{itemize}
+
+Como trabajo futuro, se recomienda:
+
+\begin{itemize}
+    \item Ampliar el conjunto de datos incluyendo más períodos históricos para cada producto.
+    \item Aplicar métodos de pronóstico más sofisticados (Promedio Móvil, Suavizado Exponencial, ARIMA) y comparar su desempeño con el método Naive.
+    \item Realizar un análisis de estacionalidad para identificar patrones cíclicos en las ventas.
+    \item Implementar un sistema de pronóstico automático que seleccione el mejor modelo en función de las características de cada serie temporal.
+\end{itemize}
+
+\subsubsection*{Código relevante}
+
+A continuación se incluyen los fragmentos de código más importantes del experimento.
+
+\begin{lstlisting}[language=Python, caption=Carga y combinación de datos., label=lst:carga_datos]
+archivos = [
+    'Movinv_Centro.txt',
+    'Movinv_DrArroyo_1.txt',
+    'Movinv_DrArroyo_2.txt',
+    'Movinv_Panaderia.txt',
+    'Movinv_SLP.txt',
+    'Movinv_zindustrial.txt'
+]
+
+dfs = []
+for arch in archivos:
+    if os.path.exists(arch):
+        try:
+            df = pd.read_csv(arch, delimiter=',', encoding='utf-8')
+        except UnicodeDecodeError:
+            df = pd.read_csv(arch, delimiter=',', encoding='latin-1')
+        dfs.append(df)
+
+data = pd.concat(dfs, ignore_index=True)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Filtrado de ventas y selección del producto., label=lst:seleccion_producto]
+ventas = data[data['Tipmovinv'] == 12].copy()
+ventas_por_producto = ventas.groupby('Claart')['Cant'].sum().sort_values(ascending=False)
+producto_elegido = ventas_por_producto.index[0]  # 07TOPUBR
+prod_ventas = ventas[ventas['Claart'] == producto_elegido].copy()
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Preparación de la serie temporal y Naive Forecast., label=lst:naive_forecast]
+def parse_fecha(fecha_str):
+    try:
+        return datetime.strptime(fecha_str, '%d/%m/%y')
+    except:
+        pass
+    try:
+        return datetime.strptime(fecha_str, '%d/%m/%Y')
+    except:
+        return pd.NaT
+
+prod_ventas['Fecha'] = prod_ventas['Fecmovinv'].apply(parse_fecha)
+prod_ventas = prod_ventas.dropna(subset=['Fecha']).sort_values('Fecha')
+
+ventas_diarias = prod_ventas.groupby('Fecha')['Cant'].sum().reset_index()
+train_df = ventas_diarias.iloc[:-1].copy()
+valid_df = ventas_diarias.iloc[-1:].copy()
+
+# Naive Forecast: último valor de entrenamiento como pronóstico
+last_train_value = train_df['Sales'].iloc[-1]
+valid_df['Naive_Forecast'] = last_train_value
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Evaluación con MSE y MAE., label=lst:evaluacion_naive]
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+
+y_true = valid_df['Sales'].values
+y_pred = valid_df['Naive_Forecast'].values
+
+mse = mean_squared_error(y_true, y_pred)
+mae = mean_absolute_error(y_true, y_pred)
+
+print(f"MSE: {mse:.2f}")
+print(f"MAE: {mae:.2f}")
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Función para graficar el pronóstico., label=lst:plot_forecast]
+def plot_forecast(validation_df, forecast_df, plot_title='Naive Forecasting'):
+    plt.figure(figsize=(12, 6))
+    plt.plot(validation_df['Fecha'], validation_df['Sales'], 'b-o', label='Real (validación)')
+    plt.plot(forecast_df['Fecha'], forecast_df['Naive_Forecast'], 'r--x', label='Naive Forecast')
+    plt.legend(loc='best')
+    plt.title(plot_title)
+    plt.xlabel('Fecha')
+    plt.ylabel('Ventas')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+\end{lstlisting}
+\newpage
 \section{Fuentes}
+\begin{thebibliography}{9}
+\bibitem{chollet2018}
+François Chollet.
+\textit{Deep Learning with Python}.
+Manning Publications, 2018.
+
+\bibitem{moreno2006}
+Antonio Moreno Ribas, Vicenç Torra Reventós y Enric Mor Pera.
+\textit{Inteligencia Artificial II}.
+Universitat Oberta de Catalunya (UOC), 2006.
+
+\bibitem{ekman2022}
+Magnus Ekman.
+\textit{Learning Deep Learning: Theory and Practice of Neural Networks, Computer Vision, Natural Language Processing, and Transformers Using TensorFlow}.
+Addison-Wesley Professional, 2022.
+
+\bibitem{fandango2018}
+Armando Fandango.
+\textit{Mastering TensorFlow 1.x: Advanced Machine Learning and Deep Learning Concepts Using TensorFlow 1.x and Keras}.
+Packt Publishing, 2018.
+
+\bibitem{raschka2020}
+Sebastian Raschka y Vahid Mirjalili.
+\textit{Python Machine Learning: Machine Learning and Deep Learning with Python, scikit-learn, and TensorFlow}.
+Marcombo, 2020.
+
+\bibitem{fagbohun2023}
+Oluwole Fagbohun.
+\textit{TensorFlow Developer Certificate Guide: Efficiently Tackle Deep Learning and ML Problems to Ace the Developer Certificate Exam}.
+Packt Publishing, 2023.
+\end{thebibliography}
 
 \end{document}
