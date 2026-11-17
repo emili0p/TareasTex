@@ -1,4 +1,6 @@
 #!/bin/bash
+# requiere tectonic para compilar
+# archivos .tex
 
 DEST_DIR="$HOME/Documentos/latex"
 
